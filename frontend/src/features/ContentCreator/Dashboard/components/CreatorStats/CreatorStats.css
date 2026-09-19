@@ -1,0 +1,41 @@
+.creator-stat-card{
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 180px;   /* Increase card height */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: .3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.creator-stat-icon{
+    width:50px;
+    height:50px;
+    border-radius:12px;
+    background:#F0DBFF;
+    color:#62007B;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.creator-stat-icon svg{
+    width: 32px;
+    height: 32px;
+}
+
+.creator-stat-value{
+    font-size:26px;
+    font-weight:700;
+    color:#24143d;
+    margin:18px 0 8px;
+}
+
+.creator-stat-title{
+    font-size:18px;
+    font-weight:500;
+    color:#6b7280;
+}
