@@ -1,0 +1,143 @@
+.recent-activities{
+    margin-top:32px;
+    background:#fff;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.activities-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+}
+
+.activities-header p{
+    color:#7b6c92;
+    margin-top:5px;
+}
+
+.activities-tools{
+    display:flex;
+    gap:12px;
+}
+
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:10px 14px;
+    background:#fff;
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    width:200px;
+    font-size:14px;
+}
+
+.filter-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#7c3aed;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px 16px;
+    cursor:pointer;
+}
+
+.activities-table tr:hover{
+    background:#faf7ff;
+}
+
+.action-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.25s ease;
+}
+
+.view-btn{
+    background:#EEF2FF;
+    color:#4F46E5;
+}
+
+.view-btn:hover{
+    background:#C7D2FE;
+}
+
+.edit-btn{
+    background:#F3E8FF;
+    color:#7C3AED;
+}
+
+.edit-btn:hover{
+    background:#DDD6FE;
+}
+
+.activities-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.activities-table th{
+    text-align:left;
+    padding:16px;
+    color:#666;
+    border-bottom:1px solid #eee;
+}
+
+.activities-table td{
+    padding:16px;
+    border-bottom:1px solid #f3f3f3;
+}
+
+.status{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status.published{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.status.draft{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.status.review{
+    background:#dbeafe;
+    color:#2563eb;
+}
+
+.view-all-btn{
+    border:none;
+    background:#7c3aed;
+    color:#fff;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+}

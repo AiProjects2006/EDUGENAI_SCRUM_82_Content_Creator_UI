@@ -1,4 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PropertiesComponent">{}</component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ac77336b-07ab-4cd7-a8e6-6e04255183d3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/eslint.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/public/favicon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/public/icons.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/public/images/ict.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/public/images/math.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/public/images/science.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/assets/hero.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/assets/profile.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/assets/react.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/assets/vite.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/layout/BackofficeLayout.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/AdminSidebar.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/CreatorSidebar.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/Sidebar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ContentCreation/ContentCreation.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ContentCreation/ContentCreation.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/CourseDetails/CourseDetails.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/CourseDetails/CourseDetails.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/CourseManagement.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/CourseManagement.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/BottomCards.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/CourseHeader.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/CourseRow.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/CourseTable.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/CourseTabs.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/components/Pagination.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CourseManagement/data/courseData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Courses/CreateCourse/CreateCourse.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Courses/CreateCourse/CreateCourse.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CreateLesson/CreateLesson.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/CreateLesson/CreateLesson.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/ContentCreatorDashboard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/ContentCreatorDashboard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/AIQuickActions/AIQuickActions.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/AIQuickActions/AIQuickActions.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/AttentionTable/AttentionTable.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/AttentionTable/AttentionTable.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CourseCard/CourseCard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CourseCard/CourseCard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CourseDetailsModal/CourseDetailsModal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CourseDetailsModal/CourseDetailsModal.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreateCourseModal/CreateCourseModal.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreateCourseModal/CreateCourseModal.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreatorAnalytics/CreatorAnalytics.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreatorAnalytics/CreatorAnalytics.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreatorStats/CreatorStats.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/CreatorStats/CreatorStats.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/EngagementInsights/EngagementInsights.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/EngagementInsights/EngagementInsights.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/ModuleCard/ModuleCard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/ModuleCard/ModuleCard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/MyCourses/MyCourses.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/MyCourses/MyCourses.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/RecentActivities/RecentActivities.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/components/RecentActivities/RecentActivities.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Dashboard/data/creatorDashboardData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/LessonManagement/LessonDetails/LessonDetails.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/LessonManagement/LessonDetails/LessonDetails.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/LessonManagement/LessonManagement.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/LessonManagement/LessonManagement.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/LessonManagement/data/lessonData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/StudentEngagement/StudentEngagement.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/StudentEngagement/StudentEngagement.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/StudentEngagement/data/engagementData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/main.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/services/api.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/services/app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/activity.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/cards.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/dashboard.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/globals.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/layout.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/navbar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/sidebar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/styles/table.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/vite.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3JXV5wa7EAOLCijkt1Ce7OkpF1r" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "feature",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Desktop/GitHub/EDUGENAI_SCRUM_82_Content_Creator_UI",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Desktop\GitHub\EDUGENAI_SCRUM_82_Content_Creator_UI" />
+    </key>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ac77336b-07ab-4cd7-a8e6-6e04255183d3" name="Changes" comment="" />
+      <created>1789807221590</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1789807221590</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
 </project>
