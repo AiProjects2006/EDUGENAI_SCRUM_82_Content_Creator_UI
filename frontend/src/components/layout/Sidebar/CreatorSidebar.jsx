@@ -43,28 +43,12 @@ function CreatorSidebar() {
 
                     <li className="menu-with-submenu">
 
-                        <NavLink to="/content-creation">
+                        <NavLink to="/create-course">
                             <FileText size={20} />
-                            <span>Content Creation</span>
+                            <span>Course Creation</span>
                         </NavLink>
 
-                        <ul className="submenu">
-
-                            <li>
-                                <NavLink to="/create-course">
-                                    <BookOpen size={16} />
-                                    <span>Course</span>
-                                </NavLink>
-                            </li>
-
-                            <li>
-                                <NavLink to="/create-lesson">
-                                    <BookCheck size={16} />
-                                    <span>Lesson</span>
-                                </NavLink>
-                            </li>
-
-                        </ul>
+                        
 
                     </li>
 
