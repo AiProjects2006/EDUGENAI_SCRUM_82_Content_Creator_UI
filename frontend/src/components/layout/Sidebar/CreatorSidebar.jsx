@@ -4,7 +4,6 @@ import {
     LayoutDashboard,
     FileText,
     BookOpen,
-    BookCheck,
     Bot,
     BarChart3,
     Sparkles,
@@ -67,9 +66,9 @@ function CreatorSidebar() {
                     </li>
 
                     <li>
-                        <NavLink to="/ai-activity-generator">
+                        <NavLink to="/activity-generator">
                             <Bot size={20} />
-                            <span>AI Activity Generator</span>
+                            <span>Activity Generator</span>
                         </NavLink>
                     </li>
 
