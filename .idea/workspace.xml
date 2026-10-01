@@ -5,42 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ac77336b-07ab-4cd7-a8e6-6e04255183d3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/ActivityConfiguration.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/ActivityPreview.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/SourceMaterials.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/data/ActivityGeneratorData.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/AnalyticsReports.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/AnalyticsReports.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/AnalyticsOverview.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/CurriculumEffectiveness.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/CustomReport.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/GradeDistribution.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/LearningMinutes.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/components/SubjectPerformance.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/AnalyticsReports/data/AnalyticsReportsData.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/GeneratedActivities.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/GeneratedActivities.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/components/AIAssistant.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/components/ActivityHeader.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/components/GenerationDetails.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/components/QuestionCard.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/GeneratedActivities/data/GeneratedActivitiesData.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/Settings.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/Settings.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/components/DangerZone.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/components/NotificationPreferences.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/components/ProfileSettings.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/components/SecuritySettings.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/components/WorkspaceSettings.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Settings/data/SettingsData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/CreatorSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/CreatorSidebar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
