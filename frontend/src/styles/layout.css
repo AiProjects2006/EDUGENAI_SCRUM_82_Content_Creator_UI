@@ -1,0 +1,16 @@
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: #F5F6FA;
+}
+
+.main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.page-content {
+    width: 100%;
+}

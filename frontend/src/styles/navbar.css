@@ -1,0 +1,25 @@
+.navbar{
+    background:white;
+    border-radius:15px;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    box-shadow:0 8px 20px rgba(124,58,237,.08);
+}
+
+.navbar h2{
+    color:#1F2937;
+}
+
+.navbar p{
+    color:#6B7280;
+}
+
+.navbar-right{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    color:#7C3AED;
+}
