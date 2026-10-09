@@ -10,7 +10,7 @@ import {
 import {
     activityTypes,
     difficultyLevels
-} from "../data/ActivityGeneratorData.js";
+} from "../data/ActivityData.js";
 
 const icons = {
     circle: CircleHelp,

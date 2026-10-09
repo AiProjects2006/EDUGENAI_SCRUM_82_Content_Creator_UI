@@ -11,7 +11,7 @@ import CourseDetails from "../features/ContentCreator/CourseManagement/CourseDet
 import LessonManagement from "../features/ContentCreator/LessonManagement/LessonManagement";
 import LessonDetails from "../features/ContentCreator/LessonManagement/LessonDetails/LessonDetails";
 import StudentEngagement from "../features/ContentCreator/StudentEngagement/StudentEngagement";
-import ActivityGenerator from "../features/ContentCreator/ActivityGenerator/ActivityGenerator.jsx";
+import Activities from "../features/ContentCreator/Activities/Activities.jsx";
 import GeneratedActivities from "../features/ContentCreator/GeneratedActivities/GeneratedActivities.jsx";
 import AnalyticsReports from "../features/ContentCreator/AnalyticsReports/AnalyticsReports.jsx";
 import Settings from "../features/ContentCreator/Settings/Settings.jsx";
@@ -44,7 +44,7 @@ function AppRoutes() {
 
             <Route path="/students-engagement" element={<StudentEngagement />}/>
 
-            <Route path="/activity-generator" element={<ActivityGenerator />}/>
+            <Route path="/activities" element={<Activities />}/>
 
             <Route path="/generated-activities" element={<GeneratedActivities />}/>
 

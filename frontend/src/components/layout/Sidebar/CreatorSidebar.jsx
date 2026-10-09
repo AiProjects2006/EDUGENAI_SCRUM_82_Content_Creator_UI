@@ -66,9 +66,9 @@ function CreatorSidebar() {
                     </li>
 
                     <li>
-                        <NavLink to="/activity-generator">
+                        <NavLink to="/activities">
                             <Bot size={20} />
-                            <span>Activity Generator</span>
+                            <span>Activities</span>
                         </NavLink>
                     </li>
 

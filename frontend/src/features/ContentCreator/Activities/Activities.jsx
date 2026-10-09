@@ -8,12 +8,12 @@ import ActivityPreview from "./components/ActivityPreview.jsx";
 import {
     courses,
     defaultGeneratorSettings
-} from "./data/ActivityGeneratorData.js";
+} from "./data/ActivityData.js";
 
-import "./ActivityGenerator.css";
+import "./Activities.css";
 import CreatorSidebar from "../../../components/layout/Sidebar/CreatorSidebar.jsx";
 
-function ActivityGenerator() {
+function Activities() {
     const [selectedCourseId, setSelectedCourseId] = useState(
         courses[0].id
     );
@@ -319,4 +319,4 @@ function ActivityGenerator() {
     );
 }
 
-export default ActivityGenerator;
+export default Activities;

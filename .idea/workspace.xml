@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ac77336b-07ab-4cd7-a8e6-6e04255183d3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/CreatorSidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/layout/Sidebar/CreatorSidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/Activities.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/ActivityGenerator.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/Activities.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/ActivityConfiguration.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/components/ActivityConfiguration.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/ActivityPreview.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/components/ActivityPreview.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/components/SourceMaterials.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/components/SourceMaterials.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/features/ContentCreator/ActivityGenerator/data/ActivityGeneratorData.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/features/ContentCreator/Activities/data/ActivityData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/routes/AppRoutes.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
