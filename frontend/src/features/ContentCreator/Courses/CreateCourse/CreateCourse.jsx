@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./CreateCourse.css";
-import {getCourses, saveCourses} from "../../CourseManagement/data/courseData";
+import {
+    createCourseInBackoffice,
+    updateCourseInBackoffice,
+    updateCourseStatusInBackoffice,
+    fetchCourseByIdFromBackoffice,
+    fetchSubjectsFromBackoffice
+} from "../../../../services/backofficeService";
 import { Archive } from "lucide-react";
 
 function CreateCourse() {
@@ -11,22 +17,60 @@ function CreateCourse() {
 
     const isEditMode = Boolean(id);
 
-    const courses = getCourses();
+    const [availableSubjects, setAvailableSubjects] = useState([
+        { subjectId: 1, name: "Science" },
+        { subjectId: 2, name: "Mathematics" },
+        { subjectId: 3, name: "ICT" },
+        { subjectId: 4, name: "English" }
+    ]);
 
-    const courseToEdit = courses.find(
-        (course) => course.id === Number(id)
-    );
+    const [courseToEdit, setCourseToEdit] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [formData, setFormData] = useState(() => ({
-        title: courseToEdit?.name || "",
-        gradeLevel: courseToEdit?.gradeLevel || "",
-        subject: courseToEdit?.subject || "",
-        description: courseToEdit?.description || "",
-        objectives: courseToEdit?.objectives || "",
-        primaryGrade: courseToEdit?.primaryGrade || "",
-        prerequisites: courseToEdit?.prerequisites || "",
+    const [formData, setFormData] = useState({
+        title: "",
+        gradeLevel: "",
+        subject: "",
+        description: "",
+        objectives: "",
+        primaryGrade: "",
+        prerequisites: "",
         thumbnail: null
-    }));
+    });
+
+    useEffect(() => {
+        let active = true;
+
+        fetchSubjectsFromBackoffice()
+            .then(subs => {
+                if (active && Array.isArray(subs) && subs.length > 0) {
+                    setAvailableSubjects(subs);
+                }
+            })
+            .catch(() => {});
+
+        if (isEditMode) {
+            fetchCourseByIdFromBackoffice(id)
+                .then(course => {
+                    if (active && course) {
+                        setCourseToEdit(course);
+                        setFormData({
+                            title: course.title || course.name || "",
+                            gradeLevel: course.gradeLevel || course.grade || "",
+                            subject: course.subject || "",
+                            description: course.description || "",
+                            objectives: course.objectives || "",
+                            primaryGrade: course.primaryGrade || "",
+                            prerequisites: course.prerequisites || "",
+                            thumbnail: course.thumbnail || course.thumbnailUrl || null
+                        });
+                    }
+                })
+                .catch(() => {});
+        }
+
+        return () => { active = false; };
+    }, [id, isEditMode]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,8 +88,10 @@ function CreateCourse() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (isSubmitting) return;
 
         if (!formData.title.trim()) {
             alert("Please enter a course title.");
@@ -67,130 +113,95 @@ function CreateCourse() {
             return;
         }
 
-        const currentCourses = getCourses();
+        setIsSubmitting(true);
+        try {
+            const thumbnailStr = formData.thumbnail
+                ? (typeof formData.thumbnail === "string" ? formData.thumbnail : formData.thumbnail.name)
+                : null;
 
-        if (isEditMode) {
-
-            const updatedCourses = currentCourses.map((course) =>
-                course.id === Number(id)
-                    ? {
-                        ...course,
-                        name: formData.title,
-                        subject: formData.subject,
-                        gradeLevel: formData.gradeLevel,
-                        description: formData.description,
-                        objectives: formData.objectives,
-                        primaryGrade: formData.primaryGrade,
-                        prerequisites: formData.prerequisites,
-                        thumbnail: formData.thumbnail
-                            ? formData.thumbnail.name
-                            : course.thumbnail,
-
-                        status: "Published"
-                    }
-                    : course
-            );
-
-            saveCourses(updatedCourses);
-
-            alert("Course published successfully!");
-        } else {
-
-            const newCourse = {
-                id: Date.now(),
-                name: formData.title,
+            const payload = {
+                title: formData.title.trim(),
+                name: formData.title.trim(),
                 subject: formData.subject,
                 gradeLevel: formData.gradeLevel,
+                grade: formData.gradeLevel,
                 description: formData.description,
                 objectives: formData.objectives,
                 primaryGrade: formData.primaryGrade,
                 prerequisites: formData.prerequisites,
-                thumbnail: formData.thumbnail
-                    ? formData.thumbnail.name
-                    : null,
+                thumbnail: thumbnailStr,
+                thumbnailUrl: thumbnailStr,
                 author: "Alex Rivers",
-                enrollments: 0,
-                completion: "0%",
+                creator: "Alex Rivers",
                 status: "Published"
             };
 
-            saveCourses([
-                ...currentCourses,
-                newCourse
-            ]);
+            if (isEditMode) {
+                await updateCourseInBackoffice(id, payload);
+                alert("Course published successfully!");
+            } else {
+                await createCourseInBackoffice(payload);
+                alert("Course created and published successfully!");
+            }
 
-            alert("Course published successfully!");
+            navigate("/course-management");
+        } catch (err) {
+            console.error("Failed to publish course:", err);
+            alert("Failed to publish course. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
-
-        navigate("/course-management");
     };
 
-    const handleSaveDraft = () => {
+    const handleSaveDraft = async () => {
+        if (isSubmitting) return;
 
         if (!formData.title.trim()) {
             alert("Please enter a course title before saving.");
             return;
         }
 
-        const currentCourses = getCourses();
+        setIsSubmitting(true);
+        try {
+            const thumbnailStr = formData.thumbnail
+                ? (typeof formData.thumbnail === "string" ? formData.thumbnail : formData.thumbnail.name)
+                : null;
 
-        if (isEditMode) {
-
-            const updatedCourses = currentCourses.map((course) =>
-                course.id === Number(id)
-                    ? {
-                        ...course,
-                        name: formData.title,
-                        gradeLevel: formData.gradeLevel,
-                        subject: formData.subject,
-                        description: formData.description,
-                        objectives: formData.objectives,
-                        primaryGrade: formData.primaryGrade,
-                        prerequisites: formData.prerequisites,
-                        thumbnail: formData.thumbnail
-                            ? formData.thumbnail.name
-                            : course.thumbnail,
-                        status: "Draft"
-                    }
-                    : course
-            );
-
-            saveCourses(updatedCourses);
-
-            alert("Course saved as draft!");
-
-        } else {
-
-            const newDraft = {
-                id: Date.now(),
-                name: formData.title,
+            const payload = {
+                title: formData.title.trim(),
+                name: formData.title.trim(),
                 gradeLevel: formData.gradeLevel || "",
+                grade: formData.gradeLevel || "",
                 subject: formData.subject || "",
                 description: formData.description || "",
                 objectives: formData.objectives || "",
                 primaryGrade: formData.primaryGrade || "",
                 prerequisites: formData.prerequisites || "",
-                thumbnail: formData.thumbnail
-                    ? formData.thumbnail.name
-                    : null,
+                thumbnail: thumbnailStr,
+                thumbnailUrl: thumbnailStr,
                 author: "Alex Rivers",
-                enrollments: 0,
-                completion: "0%",
+                creator: "Alex Rivers",
                 status: "Draft"
             };
 
-            saveCourses([
-                ...currentCourses,
-                newDraft
-            ]);
+            if (isEditMode) {
+                await updateCourseInBackoffice(id, payload);
+                alert("Course saved as draft!");
+            } else {
+                await createCourseInBackoffice(payload);
+                alert("Course saved as draft!");
+            }
 
-            alert("Course saved as draft!");
+            navigate("/course-management");
+        } catch (err) {
+            console.error("Failed to save draft:", err);
+            alert("Failed to save draft. Please try again.");
+        } finally {
+            setIsSubmitting(false);
         }
-
-        navigate("/course-management");
     };
 
-    const handleArchive = () => {
+    const handleArchive = async () => {
         if (!isEditMode) {
             return;
         }
@@ -203,21 +214,8 @@ function CreateCourse() {
             return;
         }
 
-        const currentCourses = getCourses();
-
-        const updatedCourses = currentCourses.map((course) =>
-            course.id === Number(id)
-                ? {
-                    ...course,
-                    status: "Archived"
-                }
-                : course
-        );
-
-        saveCourses(updatedCourses);
-
+        await updateCourseStatusInBackoffice(id, "Archived");
         alert("Course archived successfully!");
-
         navigate("/course-management");
     };
 
@@ -308,19 +306,11 @@ function CreateCourse() {
                             <option value="">
                                 Select subject
                             </option>
-
-                            <option value="Science">
-                                Science
-                            </option>
-
-                            <option value="Mathematics">
-                                Mathematics
-                            </option>
-
-                            <option value="ICT">
-                                ICT
-                            </option>
-
+                            {availableSubjects.map((sub) => (
+                                <option key={sub.subjectId || sub.name} value={sub.name}>
+                                    {sub.name}
+                                </option>
+                            ))}
                         </select>
 
                     </div>
@@ -504,6 +494,7 @@ function CreateCourse() {
                         type="button"
                         className="draft-btn"
                         onClick={handleSaveDraft}
+                        disabled={isSubmitting}
                     >
                         Save Draft
                     </button>
@@ -511,12 +502,15 @@ function CreateCourse() {
                     <button
                         type="submit"
                         className="publish-btn"
+                        disabled={isSubmitting}
                     >
-                        {isEditMode && courseToEdit?.status === "Draft"
-                            ? "Publish Course"
-                            : isEditMode
-                                ? "Update Course"
-                                : "Publish Course"}
+                        {isSubmitting
+                            ? "Publishing..."
+                            : isEditMode && courseToEdit?.status === "Draft"
+                                ? "Publish Course"
+                                : isEditMode
+                                    ? "Update Course"
+                                    : "Publish Course"}
                     </button>
 
                 </div>

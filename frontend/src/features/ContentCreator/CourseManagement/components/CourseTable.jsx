@@ -1,56 +1,39 @@
 import { Eye, Pencil, Trash2, Search } from "lucide-react";
 import { useState } from "react";
-import { getCourses, saveCourses } from "../data/courseData";
 import { useNavigate } from "react-router-dom";
 
-function CourseTable({ activeTab }) {
+function CourseTable({ activeTab, courses = [], onDeleteCourse }) {
 
     const [search, setSearch] = useState("");
-    const [courses, setCourses] = useState(() => getCourses());
-
     const navigate = useNavigate();
 
-    const filteredCourses = courses
+    const filteredCourses = (courses || [])
         .filter((course) =>
-            course.name
+            (course.name || course.title || "")
                 .toLowerCase()
                 .includes(search.toLowerCase())
         )
         .filter((course) => {
+            const status = (course.status || "").toLowerCase();
 
             if (activeTab === "All Courses") return true;
 
             if (activeTab === "Published")
-                return course.status === "Published";
+                return status === "published" || status === "approved";
 
             if (activeTab === "Drafts")
-                return course.status === "Draft";
+                return status === "draft" || status === "pending";
 
             if (activeTab === "Archived")
-                return course.status === "Archived";
+                return status === "archived";
 
             return true;
         });
 
     const handleDelete = (course) => {
-
-        const confirmed = window.confirm(
-            `Are you sure you want to delete "${course.name}"?`
-        );
-
-        if (!confirmed) {
-            return;
+        if (onDeleteCourse) {
+            onDeleteCourse(course);
         }
-
-        const updatedCourses = courses.filter(
-            (item) => item.id !== course.id
-        );
-
-        saveCourses(updatedCourses);
-
-        setCourses(updatedCourses);
-
-        alert("Course deleted successfully!");
     };
 
     return (
@@ -97,22 +80,22 @@ function CourseTable({ activeTab }) {
 
                         <tr key={course.id}>
 
-                            <td>{course.name}</td>
+                            <td>{course.name || course.title}</td>
 
                             <td>{course.subject}</td>
 
-                            <td>{course.author}</td>
+                            <td>{course.author || course.creator}</td>
 
-                            <td>{course.enrollments}</td>
+                            <td>{course.enrollments !== undefined ? course.enrollments : 0}</td>
 
-                            <td>{course.completion}</td>
+                            <td>{course.completion || "0%"}</td>
 
                             <td>
-                                    <span
-                                        className={`status ${course.status.toLowerCase()}`}
-                                    >
-                                        {course.status}
-                                    </span>
+                                <span
+                                    className={`status ${(course.status || "draft").toLowerCase()}`}
+                                >
+                                    {course.status}
+                                </span>
                             </td>
 
                             <td>

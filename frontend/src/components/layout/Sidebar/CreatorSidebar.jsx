@@ -59,6 +59,13 @@ function CreatorSidebar() {
                     </li>
 
                     <li>
+                        <NavLink to="/module-management">
+                            <BookOpen size={20} />
+                            <span>Module Management</span>
+                        </NavLink>
+                    </li>
+
+                    <li>
                         <NavLink to="/lesson-management">
                             <BookOpen size={20} />
                             <span>Lesson Management</span>

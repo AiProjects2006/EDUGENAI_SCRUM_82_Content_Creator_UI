@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 function CreateCourseModal({ onClose, onSave, editingCourse }) {
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [course, setCourse] = useState({
         id: "",
         title: "",
@@ -39,11 +40,18 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
 
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        onSave(course);
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            await onSave(course);
+        } finally {
+            setIsSubmitting(false);
+        }
 
     };
 
@@ -188,8 +196,11 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
                         <button
                             type="submit"
                             className="save-btn"
+                            disabled={isSubmitting}
                         >
-                            {editingCourse ? "Update Course" : "Create Course"}
+                            {isSubmitting
+                                ? "Saving..."
+                                : editingCourse ? "Update Course" : "Create Course"}
                         </button>
 
                     </div>

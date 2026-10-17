@@ -8,6 +8,7 @@ import ContentCreation from "../features/ContentCreator/ContentCreation/ContentC
 import CreateLesson from "../features/ContentCreator/CreateLesson/CreateLesson";
 import CourseManagement from "../features/ContentCreator/CourseManagement/CourseManagement";
 import CourseDetails from "../features/ContentCreator/CourseManagement/CourseDetails/CourseDetails";
+import ModuleManagement from "../features/ContentCreator/LessonManagement/ModuleManagement";
 import LessonManagement from "../features/ContentCreator/LessonManagement/LessonManagement";
 import LessonDetails from "../features/ContentCreator/LessonManagement/LessonDetails/LessonDetails";
 import StudentEngagement from "../features/ContentCreator/StudentEngagement/StudentEngagement";
@@ -33,6 +34,8 @@ function AppRoutes() {
             <Route path="/edit-course/:id" element={<BackofficeLayout sidebar={<CreatorSidebar />}><CreateCourse /></BackofficeLayout>}/>
 
             <Route path="/course/:id" element={<CourseDetails />}/>
+
+            <Route path="/module-management" element={<ModuleManagement />}/>
 
             <Route path="/create-lesson" element={<CreateLesson />}/>
 
