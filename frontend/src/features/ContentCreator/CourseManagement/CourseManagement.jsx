@@ -30,9 +30,25 @@ function CourseManagement() {
     useEffect(() => {
         loadCourses();
         window.addEventListener("focus", loadCourses);
-        const interval = setInterval(loadCourses, 10000);
+        window.addEventListener("storage", loadCourses);
+        window.addEventListener("coursesUpdated", loadCourses);
+
+        let channel = null;
+        try {
+            if (typeof BroadcastChannel !== "undefined") {
+                channel = new BroadcastChannel("edugenai_channel");
+                channel.onmessage = () => {
+                    loadCourses();
+                };
+            }
+        } catch (_) {}
+
+        const interval = setInterval(loadCourses, 4000);
         return () => {
             window.removeEventListener("focus", loadCourses);
+            window.removeEventListener("storage", loadCourses);
+            window.removeEventListener("coursesUpdated", loadCourses);
+            if (channel) channel.close();
             clearInterval(interval);
         };
     }, [loadCourses]);

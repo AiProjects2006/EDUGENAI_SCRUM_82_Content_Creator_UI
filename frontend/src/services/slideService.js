@@ -3,41 +3,7 @@ const RESOURCE_SERVICE_URL = import.meta.env.VITE_RESOURCE_SERVICE_URL || 'http:
 const STORAGE_KEY = 'learning_resources';
 
 // Default initial slides for demonstration
-const DEFAULT_SLIDES = [
-  {
-    id: 101,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Triangle?',
-    content: 'A triangle is a polygon with three edges and three vertices. It is one of the basic shapes in geometry. The sum of angles in any planar triangle is always 180 degrees.',
-    fact: 'Did you know the starfish is shaped like 5 triangles put together?',
-    icon: 'twemoji:triangular-ruler',
-    sortOrder: 1,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 102,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Square?',
-    content: 'A square is a regular quadrilateral, which means that it has four equal sides and four equal angles of 90 degrees each.',
-    fact: 'A chessboard is made of 64 smaller squares!',
-    icon: 'twemoji:stop-button',
-    sortOrder: 2,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 103,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Circle?',
-    content: 'A circle is a shape consisting of all points in a plane that are at a given distance from a given point, the center.',
-    fact: 'Bubbles are perfect spheres, which look like circles from any angle!',
-    icon: 'twemoji:hollow-red-circle',
-    sortOrder: 3,
-    createdAt: new Date().toISOString()
-  }
-];
+const DEFAULT_SLIDES = [];
 
 // Helper for cross-tab / cross-window sync
 const broadcastChange = (type, payload) => {
@@ -98,17 +64,14 @@ export const getStoredSlides = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return deduplicateSlides(parsed);
       }
     }
   } catch (e) {
     console.warn('Failed reading slides from localStorage:', e);
   }
-  // Initialize default demo slides if none exist
-  const defaults = deduplicateSlides(DEFAULT_SLIDES);
-  saveStoredSlides(defaults);
-  return defaults;
+  return [];
 };
 
 export const saveStoredSlides = (slides) => {
@@ -247,7 +210,9 @@ export const createSlideAPI = async (slideData) => {
   const localSlide = {
     id: newSlideId,
     moduleId: targetModuleId,
+    moduleTitle: slideData.moduleTitle || '',
     courseId: Number(courseId) || null,
+    courseTitle: slideData.courseTitle || '',
     title: cleanTitle,
     content: content ? content.trim() : ' ',
     fact: fact ? fact.trim() : 'Remember this important concept!',
