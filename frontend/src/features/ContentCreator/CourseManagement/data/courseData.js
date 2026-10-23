@@ -1,70 +1,33 @@
+import { isLegacyDefaultCourse, deduplicateCourses } from "../../../../services/backofficeService";
+
 const STORAGE_KEY = "courses";
-
-const defaultCourses = [
-    {
-        id: 1,
-        name: "Primary Mathematics",
-        subject: "Mathematics",
-        author: "Alex Rivers",
-        enrollments: 1250,
-        completion: "82%",
-        status: "Published",
-    },
-    {
-        id: 2,
-        name: "Primary Science",
-        subject: "Science",
-        author: "Alex Rivers",
-        enrollments: 980,
-        completion: "75%",
-        status: "Draft",
-    },
-    {
-        id: 3,
-        name: "ICT Fundamentals",
-        subject: "ICT",
-        author: "Alex Rivers",
-        enrollments: 780,
-        completion: "68%",
-        status: "Archived",
-    },
-    {
-        id: 4,
-        name: "English Grammar",
-        subject: "English",
-        author: "Alex Rivers",
-        enrollments: 1540,
-        completion: "91%",
-        status: "Published",
-    }
-];
-
-const storedCourses = localStorage.getItem(STORAGE_KEY);
-
-const courses = storedCourses
-    ? JSON.parse(storedCourses)
-    : defaultCourses;
-
-if (!storedCourses) {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(defaultCourses)
-    );
-}
-
-export default courses;
+const defaultCourses = [];
 
 export function getCourses() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-
-    return stored
-        ? JSON.parse(stored)
-        : defaultCourses;
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) {
+                return deduplicateCourses(parsed.filter(c => !isLegacyDefaultCourse(c)));
+            }
+        }
+    } catch (_) {}
+    return defaultCourses;
 }
 
 export function saveCourses(updatedCourses) {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(updatedCourses)
-    );
+    try {
+        const deduped = deduplicateCourses(updatedCourses);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(deduped));
+        localStorage.setItem("admin_courses", JSON.stringify(deduped));
+        localStorage.setItem("creator_courses", JSON.stringify(deduped));
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("storage"));
+            window.dispatchEvent(new CustomEvent("coursesUpdated", { detail: deduped }));
+        }
+    } catch (_) {}
 }
+
+const courses = getCourses();
+export default courses;

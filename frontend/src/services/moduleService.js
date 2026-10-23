@@ -2,43 +2,7 @@ const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
 const COURSE_SERVICE_URL = import.meta.env.VITE_COURSE_SERVICE_URL || 'http://localhost:8082';
 const STORAGE_KEY = 'modules';
 
-const INITIAL_DEFAULT_MODULES = [
-  {
-    moduleId: 1,
-    courseId: 1,
-    title: 'Points, Lines, and Angles',
-    description: 'Fundamental building blocks of geometry, coordinates, and acute/obtuse angles.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 2,
-    courseId: 1,
-    title: 'Triangles and the Pythagorean Theorem',
-    description: 'Exploring triangle classifications, perimeter, area, and right-triangle formulas.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 3,
-    courseId: 1,
-    title: 'Polygons and Quadrilaterals',
-    description: 'Understanding multi-sided 2D polygons, interior angles, and regular quadrilaterals.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 4,
-    courseId: 2,
-    title: 'Introduction to Cell Biology',
-    description: 'Plant and animal cell structure, microscopic organelles, and cellular functions.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 5,
-    courseId: 2,
-    title: 'Photosynthesis & Plant Energy',
-    description: 'How chloroplasts convert sunlight, water, and CO2 into chemical glucose energy.',
-    createdAt: new Date().toISOString()
-  }
-];
+const INITIAL_DEFAULT_MODULES = [];
 
 // Helper for cross-tab / cross-window sync
 const broadcastChange = (type, payload) => {
@@ -96,16 +60,14 @@ export const getStoredModules = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return deduplicateModules(parsed);
       }
     }
   } catch (e) {
     console.error('Failed reading modules from localStorage:', e);
   }
-  const defaults = deduplicateModules(INITIAL_DEFAULT_MODULES);
-  saveStoredModules(defaults);
-  return defaults;
+  return [];
 };
 
 export const saveStoredModules = (modules) => {
@@ -210,16 +172,16 @@ export const fetchCourseModules = async (courseId) => {
 };
 
 // Create a new module (or update once if matching module title exists for this course)
-export const createModuleAPI = async (title, description, courseId) => {
+export const createModuleAPI = async (title, description, courseId, courseTitle = '') => {
   const cId = Number(courseId);
   const cleanTitle = title.trim();
   const cleanDesc = description ? description.trim() : '';
 
   // Check if a module with the same title already exists for this course
-  // "it is enough update once" - update existing module instead of creating duplicate
   const currentModules = getStoredModules();
   const existing = currentModules.find(
-    m => Number(m.courseId) === cId && (m.title || m.name || '').trim().toLowerCase() === cleanTitle.toLowerCase()
+    m => ((cId && Number(m.courseId) === cId) || (courseTitle && m.courseTitle && m.courseTitle.trim().toLowerCase() === courseTitle.trim().toLowerCase())) &&
+         (m.title || m.name || '').trim().toLowerCase() === cleanTitle.toLowerCase()
   );
 
   if (existing) {
@@ -232,6 +194,7 @@ export const createModuleAPI = async (title, description, courseId) => {
     title: cleanTitle,
     description: cleanDesc,
     courseId: cId,
+    courseTitle: courseTitle || '',
     createdAt: new Date().toISOString()
   };
 

@@ -78,6 +78,42 @@ function ModuleManagement() {
 
   useEffect(() => {
     loadInitialData();
+
+    const handleSync = () => {
+      fetchCoursesFromBackoffice()
+        .then((cList) => {
+          if (Array.isArray(cList)) {
+            setCourses(cList);
+            setSelectedCourse((prev) => prev || (cList[0] ? String(cList[0].id) : ''));
+          }
+        })
+        .catch(() => {});
+      fetchAllModules()
+        .then((mList) => {
+          if (Array.isArray(mList)) setModules(deduplicateModules(mList));
+        })
+        .catch(() => {});
+      setSlides(getStoredSlides());
+    };
+
+    window.addEventListener('focus', handleSync);
+    window.addEventListener('storage', handleSync);
+
+    let channel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        channel = new BroadcastChannel('edugenai_channel');
+        channel.onmessage = () => {
+          handleSync();
+        };
+      }
+    } catch (_) {}
+
+    return () => {
+      window.removeEventListener('focus', handleSync);
+      window.removeEventListener('storage', handleSync);
+      if (channel) channel.close();
+    };
   }, []);
 
   const loadInitialData = async () => {
@@ -192,7 +228,8 @@ function ModuleManagement() {
         const savedModule = await createModuleAPI(
           moduleForm.title,
           moduleForm.description,
-          selectedCourse
+          selectedCourse,
+          selectedCourseObj?.title || selectedCourseObj?.name || ''
         );
         setModules((prev) => {
           const exists = prev.some(
@@ -313,9 +350,12 @@ function ModuleManagement() {
         });
         alert('Slide updated successfully!');
       } else {
+        const targetMod = modules.find((m) => Number(m.moduleId || m.id) === Number(slideTargetModuleId));
         await createSlideAPI({
           moduleId: slideTargetModuleId,
+          moduleTitle: targetMod?.title || '',
           courseId: selectedCourse,
+          courseTitle: selectedCourseObj?.title || selectedCourseObj?.name || '',
           title: slideForm.title,
           content: slideForm.content,
           fact: slideForm.fact,
