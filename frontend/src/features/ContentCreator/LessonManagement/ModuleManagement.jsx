@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Plus,
   Pencil,
@@ -24,7 +24,8 @@ import {
   createModuleAPI,
   updateModuleAPI,
   deleteModuleAPI,
-  deduplicateModules
+  deduplicateModules,
+  getStoredModules
 } from '../../../services/moduleService';
 import {
   fetchSlidesByModule,
@@ -76,24 +77,23 @@ function ModuleManagement() {
   // Slide Preview Modal state
   const [previewSlide, setPreviewSlide] = useState(null);
 
+  const isSyncingRef = useRef(false);
+
   useEffect(() => {
     loadInitialData();
 
-    const handleSync = () => {
-      fetchCoursesFromBackoffice()
-        .then((cList) => {
-          if (Array.isArray(cList)) {
-            setCourses(cList);
-            setSelectedCourse((prev) => prev || (cList[0] ? String(cList[0].id) : ''));
-          }
-        })
-        .catch(() => {});
-      fetchAllModules()
-        .then((mList) => {
-          if (Array.isArray(mList)) setModules(deduplicateModules(mList));
-        })
-        .catch(() => {});
-      setSlides(getStoredSlides());
+    const handleSync = async () => {
+      if (isSyncingRef.current) return;
+      isSyncingRef.current = true;
+      try {
+        const localMods = getStoredModules();
+        if (localMods.length > 0) {
+          setModules(localMods);
+        }
+        setSlides(getStoredSlides());
+      } finally {
+        isSyncingRef.current = false;
+      }
     };
 
     window.addEventListener('focus', handleSync);
@@ -103,8 +103,14 @@ function ModuleManagement() {
     try {
       if (typeof BroadcastChannel !== 'undefined') {
         channel = new BroadcastChannel('edugenai_channel');
-        channel.onmessage = () => {
-          handleSync();
+        channel.onmessage = (event) => {
+          if (
+            event.data?.type === 'COURSES_UPDATED' ||
+            event.data?.type === 'MODULES_UPDATED' ||
+            event.data?.type === 'SLIDES_UPDATED'
+          ) {
+            handleSync();
+          }
         };
       }
     } catch (_) {}

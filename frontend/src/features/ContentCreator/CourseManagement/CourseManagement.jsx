@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import BackofficeLayout from "../../../components/layout/BackofficeLayout";
 import CreatorSidebar from "../../../components/layout/Sidebar/CreatorSidebar";
 
@@ -7,16 +7,27 @@ import CourseTabs from "./components/CourseTabs";
 import CourseTable from "./components/CourseTable";
 import BottomCards from "./components/BottomCards";
 
-import { fetchCoursesFromBackoffice, deleteCourseInBackoffice, deduplicateCourses } from "../../../services/backofficeService";
+import { fetchCoursesFromBackoffice, deleteCourseInBackoffice, deduplicateCourses, getStoredLocalCourses } from "../../../services/backofficeService";
 
 import "./CourseManagement.css";
 
 function CourseManagement() {
 
     const [activeTab, setActiveTab] = useState("All Courses");
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState(() => deduplicateCourses(getStoredLocalCourses()));
+    const isLoadingRef = useRef(false);
 
-    const loadCourses = useCallback(async () => {
+    const loadCourses = useCallback(async (networkFetch = true) => {
+        if (!networkFetch) {
+            const local = getStoredLocalCourses();
+            if (Array.isArray(local)) {
+                setCourses(deduplicateCourses(local));
+            }
+            return;
+        }
+
+        if (isLoadingRef.current) return;
+        isLoadingRef.current = true;
         try {
             const data = await fetchCoursesFromBackoffice();
             if (Array.isArray(data)) {
@@ -24,30 +35,41 @@ function CourseManagement() {
             }
         } catch (e) {
             console.error("Failed loading courses:", e);
+        } finally {
+            isLoadingRef.current = false;
         }
     }, []);
 
     useEffect(() => {
-        loadCourses();
-        window.addEventListener("focus", loadCourses);
-        window.addEventListener("storage", loadCourses);
-        window.addEventListener("coursesUpdated", loadCourses);
+        loadCourses(true);
+
+        const handleLocalSync = () => loadCourses(false);
+        const handleRemoteSync = () => loadCourses(true);
+
+        window.addEventListener("focus", handleLocalSync);
+        window.addEventListener("storage", handleLocalSync);
+        window.addEventListener("coursesUpdated", handleLocalSync);
 
         let channel = null;
         try {
             if (typeof BroadcastChannel !== "undefined") {
                 channel = new BroadcastChannel("edugenai_channel");
-                channel.onmessage = () => {
-                    loadCourses();
+                channel.onmessage = (e) => {
+                    if (e.data?.type === 'COURSES_UPDATED') {
+                        handleLocalSync();
+                    }
                 };
             }
         } catch (_) {}
 
-        const interval = setInterval(loadCourses, 4000);
+        const interval = setInterval(() => {
+            loadCourses(true);
+        }, 10000);
+
         return () => {
-            window.removeEventListener("focus", loadCourses);
-            window.removeEventListener("storage", loadCourses);
-            window.removeEventListener("coursesUpdated", loadCourses);
+            window.removeEventListener("focus", handleLocalSync);
+            window.removeEventListener("storage", handleLocalSync);
+            window.removeEventListener("coursesUpdated", handleLocalSync);
             if (channel) channel.close();
             clearInterval(interval);
         };

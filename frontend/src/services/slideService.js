@@ -5,13 +5,13 @@ const STORAGE_KEY = 'learning_resources';
 // Default initial slides for demonstration
 const DEFAULT_SLIDES = [];
 
+const isJwtToken = (tok) => {
+  return typeof tok === 'string' && tok.split('.').length === 3;
+};
+
 // Helper for cross-tab / cross-window sync
 const broadcastChange = (type, payload) => {
   try {
-    if (typeof window !== 'undefined' && window.dispatchEvent) {
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent(type.toLowerCase(), { detail: payload }));
-    }
     if (typeof BroadcastChannel !== 'undefined') {
       const channel = new BroadcastChannel('edugenai_channel');
       channel.postMessage({ type, payload });
@@ -89,37 +89,40 @@ export const saveStoredSlides = (slides) => {
  * Make API request with dual fallback: Gateway -> Direct Resource Service -> LocalStorage
  */
 const request = async (path, options = {}) => {
-  const token = localStorage.getItem('access_token');
+  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+  const token = isJwtToken(rawToken) ? rawToken : null;
+  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
-
   // 1. Try Gateway
   try {
-    const res = await fetch(`${GATEWAY_URL}/api${path}`, {
+    let res = await fetch(`${GATEWAY_URL}/api${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${GATEWAY_URL}/api${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
     }
-    // If mutation failed with client/business error on Gateway, do not duplicate request
     if (isMutation && res.status < 500) {
       const errJson = await res.json().catch(() => null);
       const httpError = new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
       httpError.status = res.status;
       throw httpError;
-    }
-    // For GET requests, allow fallback on 403/401 (auth errors)
-    if (!isMutation && (res.status === 403 || res.status === 401)) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
-    } else if (!res.ok) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
     }
   } catch (err) {
     if (isMutation && !err.message?.includes('Failed to fetch') && !err.message?.includes('NetworkError')) {
@@ -129,10 +132,20 @@ const request = async (path, options = {}) => {
 
   // 2. Try Direct Resource Service (port 8085)
   try {
-    const res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+    let res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;

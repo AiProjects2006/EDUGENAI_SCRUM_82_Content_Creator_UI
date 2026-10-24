@@ -44,6 +44,10 @@ if (typeof window !== 'undefined') {
   purgeJunkCourses();
 }
 
+const isJwtToken = (tok) => {
+  return typeof tok === 'string' && tok.split('.').length === 3;
+};
+
 const broadcastCourseChange = (type = 'COURSES_UPDATED', payload = null) => {
   try {
     if (typeof BroadcastChannel !== 'undefined') {
@@ -52,14 +56,9 @@ const broadcastCourseChange = (type = 'COURSES_UPDATED', payload = null) => {
       channel.close();
     }
   } catch (_) {}
-
-  try {
-    window.dispatchEvent(new CustomEvent('coursesUpdated', { detail: { type, payload } }));
-    window.dispatchEvent(new Event('storage'));
-  } catch (_) {}
 };
 
-const getStoredLocalCourses = () => {
+export const getStoredLocalCourses = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -106,21 +105,32 @@ const saveStoredLocalCourses = (courses) => {
  * Universal backoffice API request with automatic fallback from Gateway to direct Backoffice API
  */
 const requestBackoffice = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('access_token');
+  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+  const token = isJwtToken(rawToken) ? rawToken : null;
+  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
-
   // Primary: Direct Backoffice API port 8086 as per system architecture diagram
   try {
-    const res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
+    let res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
       ...options,
       headers
     });
+
+    // If 401 returned, token may be expired or unaccepted; retry once unauthenticated
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
@@ -137,10 +147,20 @@ const requestBackoffice = async (endpoint, options = {}) => {
 
   // Fallback: via API Gateway
   try {
-    const res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${endpoint}`, {
+    let res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${endpoint}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${endpoint}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
@@ -162,7 +182,8 @@ export const fetchCoursesFromBackoffice = async (status = '', search = '') => {
     const data = await requestBackoffice(`/courses${qs}`);
     if (Array.isArray(data) && data.length > 0) {
       const deduped = deduplicateCourses(data);
-      saveStoredLocalCourses(deduped);
+      // Persist without self-broadcasting during read
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(deduped));
       return deduped;
     }
   } catch (err) {
