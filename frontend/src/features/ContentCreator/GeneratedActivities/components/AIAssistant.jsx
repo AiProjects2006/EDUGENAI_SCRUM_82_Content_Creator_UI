@@ -1,12 +1,4 @@
-import {
-    Sparkles,
-    Lightbulb,
-    Plus
-} from "lucide-react";
-
-import {
-    assistantSuggestions
-} from "../data/GeneratedActivitiesData.js";
+import { Sparkles } from "lucide-react";
 
 function AIAssistant() {
     return (
@@ -25,41 +17,11 @@ function AIAssistant() {
             </div>
 
             <p className="ai-assistant-intro">
-                The optimized these questions for
-                clarity and balance. Would you like
-                to generate 3 additional high-order
-                questions?
+                AI-powered question suggestions
+                are not available on this page yet.
+                You can review and edit your
+                saved activity questions above.
             </p>
-
-            <div className="ai-suggestion-list">
-
-                {assistantSuggestions.map(
-                    (suggestion) => (
-                        <button
-                            type="button"
-                            className="ai-suggestion"
-                            key={suggestion}
-                        >
-                            <Lightbulb size={9} />
-
-                            <span>
-                                {suggestion}
-                            </span>
-
-                            <Plus size={8} />
-                        </button>
-                    )
-                )}
-
-            </div>
-
-            <button
-                type="button"
-                className="ai-add-question-button"
-            >
-                <Plus size={10} />
-                Add Question
-            </button>
 
         </section>
     );

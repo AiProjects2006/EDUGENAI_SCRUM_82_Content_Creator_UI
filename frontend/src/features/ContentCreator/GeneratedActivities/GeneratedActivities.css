@@ -789,6 +789,341 @@
     font-size: 13px;
 }
 
+.delete-activity-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.delete-activity-button {
+    padding: 10px 14px;
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.delete-activity-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.saved-activity-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.saved-activity-select:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.edit-question-modal input[type="number"] {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    border: 1px solid #e5cfee;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #2d1745;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.edit-question-modal input[type="number"]:focus {
+    outline: none;
+    border-color: #8200b4;
+}
+
+.matching-pair-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.matching-pair-row input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #e5d9e8;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #403343;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.matching-pair-row input:focus {
+    outline: none;
+    border-color: #a86db7;
+    box-shadow: 0 0 0 2px rgba(114, 0, 140, 0.08);
+}
+
+.drag-drop-edit-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.drag-drop-edit-row input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #e5d9e8;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #403343;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.drag-drop-edit-row > span {
+    text-align: center;
+    color: #72008c;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.drag-drop-edit-row input:focus {
+    outline: none;
+    border-color: #a86db7;
+    box-shadow: 0 0 0 2px rgba(114, 0, 140, 0.08);
+}
+
+.generated-activity-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    font-family: inherit;
+    z-index: 9999;
+}
+
+.generated-activity-toast.toast-success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.generated-activity-toast.toast-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: currentColor;
+    font-size: 0;
+}
+
+.toast-icon::first-letter {
+    font-size: 16px;
+}
+
+.toast-success .toast-icon,
+.toast-error .toast-icon {
+    background: transparent;
+    border: 2px solid currentColor;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    font-size: 13px;
+}
+
+.toast-content strong {
+    font-size: 14px;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.generated-activity-toast.toast-warning {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+}
+
+.toast-warning .toast-icon {
+    background: transparent;
+    border: 2px solid currentColor;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.delete-confirmation-modal {
+    width: min(420px, 100%);
+    padding: 28px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    text-align: center;
+}
+
+.delete-confirmation-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.delete-confirmation-modal h3 {
+    margin: 0 0 12px;
+    color: #403343;
+    font-size: 20px;
+}
+
+.delete-confirmation-modal p {
+    margin: 0 0 10px;
+    color: #6b6470;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.delete-confirmation-modal .delete-confirmation-warning {
+    color: #dc2626;
+    font-size: 13px;
+}
+
+.delete-confirmation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.delete-confirmation-actions button {
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-confirmation-cancel {
+    background: #ffffff;
+    color: #72008c;
+    border: 1px solid #d8c5df;
+}
+
+.delete-confirmation-confirm {
+    background: #dc2626;
+    color: #ffffff;
+    border: 1px solid #dc2626;
+}
+
+.delete-confirmation-confirm:hover {
+    background: #b91c1c;
+}
+
+.activity-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.activity-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.activity-filter-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #403343;
+}
+
+.activity-filter-field select {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid #e5d9e8;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #403343;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.activity-filter-field select:focus {
+    outline: none;
+    border-color: #a86db7;
+    box-shadow: 0 0 0 3px rgba(114, 0, 140, 0.08);
+}
+
+@media (max-width: 768px) {
+    .activity-filters {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .drag-drop-edit-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .drag-drop-edit-row > span {
+        transform: rotate(90deg);
+    }
+}
+
+@media (max-width: 480px) {
+    .matching-pair-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 1100px) {
     .generated-activities-layout {
         grid-template-columns: minmax(0, 1fr) 230px;

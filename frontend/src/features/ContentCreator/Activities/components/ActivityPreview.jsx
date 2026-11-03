@@ -167,84 +167,401 @@ function ActivityPreview({
                                         placeholder="Write your question here..."
                                     />
 
-                                    <div className="activity-options-heading">
-                                        <span>
-                                            ANSWER OPTIONS
-                                        </span>
+                                    {["mcq", "true-false", "quiz", "poll", "timed-quiz", "challenge-quiz"].includes(settings.activityType) ? (
+                                        <>
+                                            <div className="activity-options-heading">
+                                                <span>ANSWER OPTIONS</span>
+                                                <small>Select the correct answer</small>
+                                            </div>
 
-                                        <small>
-                                            Select the correct answer
-                                        </small>
-                                    </div>
-
-                                    <div className="activity-options">
-
-                                        {question.options.map(
-                                            (
-                                                option,
-                                                optionIndex
-                                            ) => (
-                                                <div
-                                                    className={`activity-option ${
-                                                        option.correct
-                                                            ? "correct"
-                                                            : ""
-                                                    }`}
-                                                    key={
-                                                        option.id
-                                                    }
-                                                >
-
-                                                    <button
-                                                        type="button"
-                                                        className="activity-correct-button"
-                                                        onClick={() =>
-                                                            onSetCorrectAnswer(
-                                                                question.id,
-                                                                option.id
-                                                            )
-                                                        }
-                                                        title="Mark as correct answer"
+                                            <div className="activity-options">
+                                                {(question.options || []).map((option, optionIndex) => (
+                                                    <div
+                                                        className={`activity-option ${
+                                                            option.correct ? "correct" : ""
+                                                        }`}
+                                                        key={option.id}
                                                     >
-                                                        {option.correct ? (
-                                                            <CheckCircle2
-                                                                size={16}
-                                                            />
+                                                        {settings.activityType === "poll" ? (
+                                                            <span className="activity-correct-button">
+                                                                {String.fromCharCode(65 + optionIndex)}
+                                                            </span>
                                                         ) : (
-                                                            String.fromCharCode(
-                                                                65 +
-                                                                optionIndex
-                                                            )
+                                                            <button
+                                                                type="button"
+                                                                className="activity-correct-button"
+                                                                onClick={() =>
+                                                                    onSetCorrectAnswer(question.id, option.id)
+                                                                }
+                                                                title="Mark as correct answer"
+                                                            >
+                                                                {option.correct ? (
+                                                                    <CheckCircle2 size={16} />
+                                                                ) : (
+                                                                    String.fromCharCode(65 + optionIndex)
+                                                                )}
+                                                            </button>
                                                         )}
-                                                    </button>
+
+                                                        <input
+                                                            type="text"
+                                                            value={option.text}
+                                                            onChange={(event) =>
+                                                                onUpdateOption(
+                                                                    question.id,
+                                                                    option.id,
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                            placeholder={`Answer option ${optionIndex + 1}`}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    ) : settings.activityType === "fill-blanks" ? (
+                                        <div className="activity-options">
+                                            <label>CORRECT ANSWER</label>
+
+                                            <input
+                                                type="text"
+                                                value={question.fillBlanks?.[0]?.correctAnswer || ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(
+                                                        question.id,
+                                                        "fillBlanks",
+                                                        [{ correctAnswer: event.target.value }]
+                                                    )
+                                                }
+                                                placeholder="Enter the correct answer"
+                                            />
+                                        </div>
+                                    ) : ["essay", "short-answer", "problem-solving", "application-based"].includes(settings.activityType) ? (
+                                        <div className="activity-options">
+
+                                            <label>MINIMUM WORD COUNT</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={question.essay?.minWordCount ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        minWordCount: event.target.value === ""
+                                                            ? null
+                                                            : Number(event.target.value)
+                                                    })
+                                                }
+                                                placeholder="Minimum words"
+                                            />
+
+                                            <label>MAXIMUM WORD COUNT</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={question.essay?.maxWordCount ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        maxWordCount: event.target.value === ""
+                                                            ? null
+                                                            : Number(event.target.value)
+                                                    })
+                                                }
+                                                placeholder="Maximum words"
+                                            />
+
+                                            <label>GRADING RUBRIC</label>
+                                            <textarea
+                                                maxLength={1000}
+                                                value={question.essay?.gradingRubric ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        gradingRubric: event.target.value
+                                                    })
+                                                }
+                                                placeholder="Enter grading criteria..."
+                                            />
+
+                                        </div>
+                                    ) : settings.activityType === "essay" ? (
+                                        <div className="activity-options">
+
+                                            <label>MINIMUM WORD COUNT</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={question.essay?.minWordCount ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        minWordCount: event.target.value === ""
+                                                            ? null
+                                                            : Number(event.target.value)
+                                                    })
+                                                }
+                                                placeholder="Minimum words"
+                                            />
+
+                                            <label>MAXIMUM WORD COUNT</label>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                value={question.essay?.maxWordCount ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        maxWordCount: event.target.value === ""
+                                                            ? null
+                                                            : Number(event.target.value)
+                                                    })
+                                                }
+                                                placeholder="Maximum words"
+                                            />
+
+                                            <label>GRADING RUBRIC</label>
+                                            <textarea
+                                                maxLength={1000}
+                                                value={question.essay?.gradingRubric ?? ""}
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(question.id, "essay", {
+                                                        ...question.essay,
+                                                        gradingRubric: event.target.value
+                                                    })
+                                                }
+                                                placeholder="Enter grading criteria..."
+                                            />
+
+                                        </div>
+                                    ) : settings.activityType === "matching" ? (
+                                        <div className="activity-options">
+                                            <label>MATCHING PAIRS</label>
+
+                                            {(question.matchingPairs || []).map((pair, pairIndex) => (
+                                                <div
+                                                    key={pair.id}
+                                                    style={{
+                                                        display: "flex",
+                                                        gap: "12px",
+                                                        marginBottom: "12px"
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        value={pair.leftItem}
+                                                        placeholder={`Left Item ${pairIndex + 1}`}
+                                                        onChange={(event) => {
+                                                            const updatedPairs = question.matchingPairs.map((item) =>
+                                                                item.id === pair.id
+                                                                    ? { ...item, leftItem: event.target.value }
+                                                                    : item
+                                                            );
+
+                                                            onUpdateQuestion(
+                                                                question.id,
+                                                                "matchingPairs",
+                                                                updatedPairs
+                                                            );
+                                                        }}
+                                                    />
 
                                                     <input
                                                         type="text"
-                                                        value={
-                                                            option.text
-                                                        }
-                                                        onChange={(
-                                                            event
-                                                        ) =>
-                                                            onUpdateOption(
+                                                        value={pair.rightItem}
+                                                        placeholder={`Right Item ${pairIndex + 1}`}
+                                                        onChange={(event) => {
+                                                            const updatedPairs = question.matchingPairs.map((item) =>
+                                                                item.id === pair.id
+                                                                    ? { ...item, rightItem: event.target.value }
+                                                                    : item
+                                                            );
+
+                                                            onUpdateQuestion(
                                                                 question.id,
-                                                                option.id,
-                                                                event
-                                                                    .target
-                                                                    .value
-                                                            )
-                                                        }
-                                                        placeholder={`Answer option ${
-                                                            optionIndex +
-                                                            1
-                                                        }`}
+                                                                "matchingPairs",
+                                                                updatedPairs
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : settings.activityType === "sorting" ? (
+                                        <div className="activity-options">
+                                            <label>SORTING ITEMS</label>
+
+                                            {(question.sortingItems || []).map((item, index) => (
+                                                <div
+                                                    key={item.id}
+                                                    style={{
+                                                        display: "flex",
+                                                        gap: "12px",
+                                                        marginBottom: "12px",
+                                                        alignItems: "center"
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        value={item.itemText}
+                                                        placeholder={`Item ${index + 1}`}
+                                                        onChange={(event) => {
+                                                            const updatedItems = question.sortingItems.map(
+                                                                (currentItem) =>
+                                                                    currentItem.id === item.id
+                                                                        ? {
+                                                                            ...currentItem,
+                                                                            itemText: event.target.value
+                                                                        }
+                                                                        : currentItem
+                                                            );
+
+                                                            onUpdateQuestion(
+                                                                question.id,
+                                                                "sortingItems",
+                                                                updatedItems
+                                                            );
+                                                        }}
                                                     />
 
+                                                    <span>Correct Order: {item.correctOrder}</span>
                                                 </div>
-                                            )
-                                        )}
+                                            ))}
+                                        </div>
+                                    ) : settings.activityType === "drag-drop" ? (
+                                        <div className="activity-options">
+                                            <label>DRAG ITEMS & DROP ZONES</label>
 
-                                    </div>
+                                            {(question.dragItems || []).map((item, index) => (
+                                                <div
+                                                    key={item.id}
+                                                    style={{
+                                                        display: "flex",
+                                                        gap: "12px",
+                                                        marginBottom: "12px",
+                                                        alignItems: "center"
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        value={item.itemText}
+                                                        placeholder={`Drag Item ${index + 1}`}
+                                                        onChange={(event) => {
+                                                            const updatedItems = question.dragItems.map(
+                                                                (currentItem, itemIndex) =>
+                                                                    itemIndex === index
+                                                                        ? { ...currentItem, itemText: event.target.value }
+                                                                        : currentItem
+                                                            );
+
+                                                            onUpdateQuestion(question.id, "dragItems", updatedItems);
+                                                        }}
+                                                    />
+
+                                                    <span>→</span>
+
+                                                    <input
+                                                        type="text"
+                                                        value={question.dropZones?.[index]?.zoneLabel ?? ""}
+                                                        placeholder={`Drop Zone ${index + 1}`}
+                                                        onChange={(event) => {
+                                                            const updatedZones = question.dropZones.map(
+                                                                (zone, zoneIndex) =>
+                                                                    zoneIndex === index
+                                                                        ? { ...zone, zoneLabel: event.target.value }
+                                                                        : zone
+                                                            );
+
+                                                            onUpdateQuestion(question.id, "dropZones", updatedZones);
+                                                        }}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : settings.activityType === "hotspot" ? (
+                                        <div className="activity-options">
+                                            <label>IMAGE URL</label>
+
+                                            <input
+                                                type="text"
+                                                value={question.imageUrl || ""}
+                                                placeholder="Enter image URL"
+                                                onChange={(event) =>
+                                                    onUpdateQuestion(
+                                                        question.id,
+                                                        "imageUrl",
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+
+                                            <label>HOTSPOT REGION</label>
+
+                                            {(question.hotspotRegions || []).map((region, index) => (
+                                                <div key={region.id}>
+                                                    {[
+                                                        ["xCoordinate", "X Coordinate"],
+                                                        ["yCoordinate", "Y Coordinate"],
+                                                        ["width", "Width"],
+                                                        ["height", "Height"]
+                                                    ].map(([field, label]) => (
+                                                        <div
+                                                            key={field}
+                                                            style={{
+                                                                display: "grid",
+                                                                gridTemplateColumns: "140px minmax(0, 1fr)",
+                                                                alignItems: "center",
+                                                                gap: "16px",
+                                                                marginBottom: "14px",
+                                                                maxWidth: "520px"
+                                                            }}
+                                                        >
+                                                            <label>{label}</label>
+
+                                                            <input
+                                                                type="number"
+                                                                min={
+                                                                    field === "width" || field === "height"
+                                                                        ? 1
+                                                                        : 0
+                                                                }
+                                                                step="1"
+                                                                value={region[field] ?? ""}
+                                                                style={{
+                                                                    width: "100%",
+                                                                    padding: "10px 12px",
+                                                                    border: "1px solid #e5cfee",
+                                                                    borderRadius: "6px",
+                                                                    boxSizing: "border-box"
+                                                                }}
+                                                                onChange={(event) => {
+                                                                    const updatedRegions =
+                                                                        question.hotspotRegions.map(
+                                                                            (item, itemIndex) =>
+                                                                                itemIndex === index
+                                                                                    ? {
+                                                                                        ...item,
+                                                                                        [field]:
+                                                                                            event.target.value === ""
+                                                                                                ? null
+                                                                                                : Number(event.target.value)
+                                                                                    }
+                                                                                    : item
+                                                                        );
+
+                                                                    onUpdateQuestion(
+                                                                        question.id,
+                                                                        "hotspotRegions",
+                                                                        updatedRegions
+                                                                    );
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : null}
 
                                 </div>
 

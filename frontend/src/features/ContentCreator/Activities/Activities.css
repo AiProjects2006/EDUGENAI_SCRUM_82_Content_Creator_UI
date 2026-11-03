@@ -873,6 +873,53 @@
             0 0 0 2px rgba(114, 0, 140, 0.04);
 }
 
+.activity-options input[type="number"],
+.activity-options textarea {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    border: 1px solid #e5cfee;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #2d1745;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.activity-options input[type="number"]:focus,
+.activity-options textarea:focus {
+    outline: none;
+    border-color: #8200b4;
+}
+
+.activity-options textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.activity-options input[type="text"] {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #e5cfee;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #2d1745;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.activity-options input[type="text"]:focus {
+    outline: none;
+    border-color: #8200b4;
+}
+
 @media (min-width: 1500px) {
 
     .activity-generator-page {

@@ -18,7 +18,7 @@ function ActivityHeader({
 
                 <div className="generated-activity-breadcrumb">
                     <span>
-                        {activity.course}
+                        Module ID: {activity.moduleId}
                     </span>
                 </div>
 
@@ -31,9 +31,8 @@ function ActivityHeader({
                 </h2>
 
                 <p>
-                    Generated recently with
-                    AI multi-type choices questions.
-                    Review and edit before publishing.
+                    {activity.description?.trim() ||
+                        "Review and edit this activity before publishing."}
                 </p>
 
             </div>
@@ -73,9 +72,14 @@ function ActivityHeader({
                     type="button"
                     className="activity-publish-button"
                     onClick={onPublish}
+                    disabled={["PUBLISHED", "ARCHIVED"].includes(activity.status)}
                 >
-                    <Send size={10} />
-                    Publish to Lesson
+                    <Send size={12} />
+                    {activity.status === "PUBLISHED"
+                        ? "Published"
+                        : activity.status === "ARCHIVED"
+                            ? "Archived"
+                            : "Publish Activity"}
                 </button>
 
             </div>
