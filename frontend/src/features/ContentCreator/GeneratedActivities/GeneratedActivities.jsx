@@ -19,6 +19,8 @@ import {
 } from "../../../services/activityApi";
 
 function GeneratedActivities() {
+    const [isSavingQuestion, setIsSavingQuestion] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const mapApiQuestionsToUI = (apiQuestions = []) => {
         return [...apiQuestions]
@@ -316,7 +318,7 @@ function GeneratedActivities() {
     };
 
     const handleDelete = async (questionId, confirmed = false) => {
-        if (!currentActivity) return;
+        if (isDeleting || !currentActivity) return;
 
         if (confirmed !== true) {
             setDeleteConfirmation({
@@ -336,7 +338,7 @@ function GeneratedActivities() {
                 "An activity must contain at least one question.",
                 "warning"
             );
-            return;
+            return false;
         }
 
         const mappedQuestions = remainingQuestions.map(
@@ -417,6 +419,8 @@ function GeneratedActivities() {
             questions: mappedQuestions
         };
 
+        setIsDeleting(true);
+
         try {
             await updateActivity(
                 currentActivity.activityId,
@@ -433,6 +437,7 @@ function GeneratedActivities() {
             );
 
             showMessage("Question deleted successfully!");
+            return true;
 
         } catch (error) {
             console.error(
@@ -441,6 +446,9 @@ function GeneratedActivities() {
             );
 
             showMessage("Failed to delete question.", "error");
+            return false;
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -458,10 +466,14 @@ function GeneratedActivities() {
             return;
         }
 
+        let activityDeleted = false;
+
         try {
-            setLoading(true);
+            setIsDeleting(true);
 
             await deleteActivity(activityId);
+
+            activityDeleted = true;
 
             const listResponse = await getActivities();
 
@@ -490,6 +502,7 @@ function GeneratedActivities() {
             }
 
             showMessage("Activity deleted successfully!");
+            return true;
 
         } catch (error) {
             console.error(
@@ -502,9 +515,10 @@ function GeneratedActivities() {
                 "Delete or refresh failed. Please check the activity list.",
                 "error"
             );
+            return activityDeleted;
 
         } finally {
-            setLoading(false);
+            setIsDeleting(false);
         }
     };
 
@@ -571,7 +585,7 @@ function GeneratedActivities() {
     };
 
     const handleSaveQuestion = async () => {
-        if (!editingQuestion || !currentActivity) return;
+        if (isSavingQuestion || !editingQuestion || !currentActivity) return;
 
         const updatedQuestions = questions.map((question) =>
             question.id === editingQuestion.id
@@ -651,6 +665,8 @@ function GeneratedActivities() {
             questions: mappedQuestions
         };
 
+        setIsSavingQuestion(true);
+
         try {
             const response = await updateActivity(
                 currentActivity.activityId,
@@ -678,6 +694,8 @@ function GeneratedActivities() {
             );
 
             showMessage("Failed to update question.", "error");
+        } finally {
+            setIsSavingQuestion(false);
         }
     };
 
@@ -755,7 +773,7 @@ function GeneratedActivities() {
             await updateActivity(currentActivity.activityId, payload);
 
             const response = await getActivityById(currentActivity.activityId);
-            
+
             setCurrentActivity(response.data);
             setQuestions(mapApiQuestionsToUI(response.data.questions));
 
@@ -1021,6 +1039,7 @@ function GeneratedActivities() {
                     onOptionChange={handleEditOptionChange}
                     onCorrectChange={handleEditCorrectAnswer}
                     onSave={handleSaveQuestion}
+                    isSaving={isSavingQuestion}
                 />
             )}
 
@@ -1075,14 +1094,14 @@ function GeneratedActivities() {
                             <button
                                 type="button"
                                 className="delete-confirmation-confirm"
-                                onClick={() => {
+                                disabled={isDeleting}
+                                onClick={async () => {
                                     const pending = deleteConfirmation;
-                                    setDeleteConfirmation(null);
 
                                     if (
-                                        currentActivity?.activityId !==
-                                        pending.activityId
+                                        currentActivity?.activityId !== pending.activityId
                                     ) {
+                                        setDeleteConfirmation(null);
                                         showMessage(
                                             "The selected activity has changed. Please try again.",
                                             "error"
@@ -1091,15 +1110,28 @@ function GeneratedActivities() {
                                     }
 
                                     if (pending.type === "question") {
-                                        handleDelete(pending.questionId, true);
+                                        const success = await handleDelete(
+                                            pending.questionId,
+                                            true
+                                        );
+
+                                        if (success) {
+                                            setDeleteConfirmation(null);
+                                        }
                                     } else {
-                                        handleDeleteActivity(true);
+                                        const success = await handleDeleteActivity(true);
+
+                                        if (success) {
+                                            setDeleteConfirmation(null);
+                                        }
                                     }
                                 }}
                             >
-                                {deleteConfirmation.type === "question"
-                                    ? "Delete Question"
-                                    : "Delete Activity"}
+                                {isDeleting
+                                    ? "Deleting..."
+                                    : deleteConfirmation.type === "question"
+                                        ? "Delete Question"
+                                        : "Delete Activity"}
                             </button>
                         </div>
                     </div>
@@ -1117,7 +1149,8 @@ function EditQuestionModal({
                                onChange,
                                onOptionChange,
                                onCorrectChange,
-                               onSave
+                               onSave,
+                               isSaving = false
                            }) {
     return (
         <div
@@ -1528,9 +1561,10 @@ function EditQuestionModal({
                         type="button"
                         className="generated-modal-save"
                         onClick={onSave}
+                        disabled={isSaving}
                     >
                         <Save size={11} />
-                        Save Changes
+                        {isSaving ? "Saving..." : "Save Changes"}
                     </button>
 
                 </div>
