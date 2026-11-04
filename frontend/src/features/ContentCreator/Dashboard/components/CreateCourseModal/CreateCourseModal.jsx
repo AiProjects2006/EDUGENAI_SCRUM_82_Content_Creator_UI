@@ -3,47 +3,36 @@ import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 function CreateCourseModal({ onClose, onSave, editingCourse }) {
-
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [course, setCourse] = useState({
         id: "",
         title: "",
-        category: "",
-        grade: "",
-        description: "",
-        image: null
+        category: "Mathematics",
+        grade: "Grade 3",
+        description: ""
     });
 
     useEffect(() => {
-
         if (editingCourse) {
-
             setCourse({
                 id: editingCourse.id,
-                title: editingCourse.title,
-                category: editingCourse.category,
-                grade: editingCourse.grade,
-                description: editingCourse.description || "",
-                image: editingCourse.image
+                title: editingCourse.title || editingCourse.name || "",
+                category: editingCourse.category || editingCourse.subject || "Mathematics",
+                grade: editingCourse.grade || editingCourse.gradeLevel || "Grade 3",
+                description: editingCourse.description || ""
             });
-
         }
-
     }, [editingCourse]);
 
     const handleChange = (e) => {
-
         setCourse({
             ...course,
             [e.target.name]: e.target.value
         });
-
     };
 
     const handleSubmit = async (e) => {
-
         e.preventDefault();
-
         if (isSubmitting) return;
 
         setIsSubmitting(true);
@@ -52,36 +41,27 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
         } finally {
             setIsSubmitting(false);
         }
-
     };
 
     return (
-
         <div className="modal-overlay">
-
             <div className="course-modal">
-
                 <div className="modal-header">
-
                     <h2>
                         {editingCourse ? "Edit Course" : "Create New Course"}
                     </h2>
-
                     <button
+                        type="button"
                         className="close-btn"
                         onClick={onClose}
                     >
                         <X size={20}/>
                     </button>
-
                 </div>
 
                 <form onSubmit={handleSubmit}>
-
                     <div className="form-group">
-
-                        <label>Course Title</label>
-
+                        <label>Course Title *</label>
                         <input
                             type="text"
                             name="title"
@@ -90,89 +70,38 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
                             placeholder="Enter course title"
                             required
                         />
-
                     </div>
 
                     <div className="form-group">
-
-                        <label>Category</label>
-
+                        <label>Subject / Category *</label>
                         <select
                             name="category"
                             value={course.category}
                             onChange={handleChange}
                             required
                         >
-                            <option value="">Select Category</option>
-                            <option>Science</option>
-                            <option>Mathematics</option>
-                            <option>ICT</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Environmental Studies">Environmental Studies</option>
+                            <option value="ICT">ICT</option>
                         </select>
-
                     </div>
 
                     <div className="form-group">
-
-                        <label>Grade</label>
-
+                        <label>Grade *</label>
                         <select
                             name="grade"
                             value={course.grade}
                             onChange={handleChange}
                             required
                         >
-                            <option value="">Select Grade</option>
-                            <option>Grade 1</option>
-                            <option>Grade 2</option>
-                            <option>Grade 3</option>
-                            <option>Grade 4</option>
-                            <option>Grade 5</option>
-                            <option>Grade 6</option>
-                            <option>Grade 7</option>
-                            <option>Grade 8</option>
-                            <option>Grade 9</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
                         </select>
-
                     </div>
 
                     <div className="form-group">
-
-                        <label>Course Image</label>
-
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) =>
-                                setCourse({
-                                    ...course,
-                                    image: e.target.files[0]
-                                })
-                            }
-                        />
-
-                        {course.image && (
-
-                            <div className="image-preview">
-
-                                <img
-                                    src={
-                                        course.image instanceof File
-                                            ? URL.createObjectURL(course.image)
-                                            : course.image
-                                    }
-                                    alt="Preview"
-                                />
-
-                            </div>
-
-                        )}
-
-                    </div>
-
-                    <div className="form-group">
-
                         <label>Description</label>
-
                         <textarea
                             name="description"
                             rows="4"
@@ -180,11 +109,9 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
                             onChange={handleChange}
                             placeholder="Course description..."
                         />
-
                     </div>
 
                     <div className="modal-buttons">
-
                         <button
                             type="button"
                             className="cancel-btn"
@@ -202,17 +129,11 @@ function CreateCourseModal({ onClose, onSave, editingCourse }) {
                                 ? "Saving..."
                                 : editingCourse ? "Update Course" : "Create Course"}
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default CreateCourseModal;

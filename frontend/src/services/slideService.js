@@ -3,49 +3,15 @@ const RESOURCE_SERVICE_URL = import.meta.env.VITE_RESOURCE_SERVICE_URL || 'http:
 const STORAGE_KEY = 'learning_resources';
 
 // Default initial slides for demonstration
-const DEFAULT_SLIDES = [
-  {
-    id: 101,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Triangle?',
-    content: 'A triangle is a polygon with three edges and three vertices. It is one of the basic shapes in geometry. The sum of angles in any planar triangle is always 180 degrees.',
-    fact: 'Did you know the starfish is shaped like 5 triangles put together?',
-    icon: 'twemoji:triangular-ruler',
-    sortOrder: 1,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 102,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Square?',
-    content: 'A square is a regular quadrilateral, which means that it has four equal sides and four equal angles of 90 degrees each.',
-    fact: 'A chessboard is made of 64 smaller squares!',
-    icon: 'twemoji:stop-button',
-    sortOrder: 2,
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 103,
-    moduleId: 1,
-    courseId: 1,
-    title: 'What is a Circle?',
-    content: 'A circle is a shape consisting of all points in a plane that are at a given distance from a given point, the center.',
-    fact: 'Bubbles are perfect spheres, which look like circles from any angle!',
-    icon: 'twemoji:hollow-red-circle',
-    sortOrder: 3,
-    createdAt: new Date().toISOString()
-  }
-];
+const DEFAULT_SLIDES = [];
+
+const isJwtToken = (tok) => {
+  return typeof tok === 'string' && tok.split('.').length === 3;
+};
 
 // Helper for cross-tab / cross-window sync
 const broadcastChange = (type, payload) => {
   try {
-    if (typeof window !== 'undefined' && window.dispatchEvent) {
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent(type.toLowerCase(), { detail: payload }));
-    }
     if (typeof BroadcastChannel !== 'undefined') {
       const channel = new BroadcastChannel('edugenai_channel');
       channel.postMessage({ type, payload });
@@ -98,17 +64,14 @@ export const getStoredSlides = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return deduplicateSlides(parsed);
       }
     }
   } catch (e) {
     console.warn('Failed reading slides from localStorage:', e);
   }
-  // Initialize default demo slides if none exist
-  const defaults = deduplicateSlides(DEFAULT_SLIDES);
-  saveStoredSlides(defaults);
-  return defaults;
+  return [];
 };
 
 export const saveStoredSlides = (slides) => {
@@ -126,37 +89,40 @@ export const saveStoredSlides = (slides) => {
  * Make API request with dual fallback: Gateway -> Direct Resource Service -> LocalStorage
  */
 const request = async (path, options = {}) => {
-  const token = localStorage.getItem('access_token');
+  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+  const token = isJwtToken(rawToken) ? rawToken : null;
+  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
-
   // 1. Try Gateway
   try {
-    const res = await fetch(`${GATEWAY_URL}/api${path}`, {
+    let res = await fetch(`${GATEWAY_URL}/api${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${GATEWAY_URL}/api${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
     }
-    // If mutation failed with client/business error on Gateway, do not duplicate request
     if (isMutation && res.status < 500) {
       const errJson = await res.json().catch(() => null);
       const httpError = new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
       httpError.status = res.status;
       throw httpError;
-    }
-    // For GET requests, allow fallback on 403/401 (auth errors)
-    if (!isMutation && (res.status === 403 || res.status === 401)) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
-    } else if (!res.ok) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
     }
   } catch (err) {
     if (isMutation && !err.message?.includes('Failed to fetch') && !err.message?.includes('NetworkError')) {
@@ -166,10 +132,20 @@ const request = async (path, options = {}) => {
 
   // 2. Try Direct Resource Service (port 8085)
   try {
-    const res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+    let res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
@@ -247,7 +223,9 @@ export const createSlideAPI = async (slideData) => {
   const localSlide = {
     id: newSlideId,
     moduleId: targetModuleId,
+    moduleTitle: slideData.moduleTitle || '',
     courseId: Number(courseId) || null,
+    courseTitle: slideData.courseTitle || '',
     title: cleanTitle,
     content: content ? content.trim() : ' ',
     fact: fact ? fact.trim() : 'Remember this important concept!',

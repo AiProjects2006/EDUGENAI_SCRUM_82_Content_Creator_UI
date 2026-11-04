@@ -12,7 +12,9 @@ import {
     Presentation,
     ChevronDown,
     ChevronUp,
-    Sparkles
+    Sparkles,
+    FolderKanban,
+    ExternalLink
 } from "lucide-react";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,6 +26,7 @@ import CreatorSidebar from "../../../../components/layout/Sidebar/CreatorSidebar
 import { getCourses } from "../data/courseData";
 import { fetchCourseModules, createModuleAPI, deleteModuleAPI, updateModuleAPI, deduplicateModules } from "../../../../services/moduleService";
 import { createSlideAPI, getStoredSlides, deleteSlideAPI } from "../../../../services/slideService";
+import { fetchCourseByIdFromBackoffice } from "../../../../services/backofficeService";
 
 import "./CourseDetails.css";
 
@@ -51,9 +54,23 @@ function CourseDetails() {
         icon: 'twemoji:light-bulb'
     });
 
-    const course = courses.find(
-        (item) => item.id === Number(id)
-    );
+    const [course, setCourse] = useState(() => {
+        return courses.find(
+            (item) => String(item.id) === String(id) || String(item.courseId) === String(id)
+        ) || null;
+    });
+
+    useEffect(() => {
+        let active = true;
+        fetchCourseByIdFromBackoffice(id)
+            .then(res => {
+                if (active && res) {
+                    setCourse(res);
+                }
+            })
+            .catch(() => {});
+        return () => { active = false; };
+    }, [id]);
 
     useEffect(() => {
         if (course) {
@@ -80,7 +97,8 @@ function CourseDetails() {
 
         setLoading(true);
         try {
-            const savedModule = await createModuleAPI(moduleForm.title, moduleForm.description, course.id);
+            const courseTitle = course.name || course.title || '';
+            const savedModule = await createModuleAPI(moduleForm.title, moduleForm.description, course.id, courseTitle);
             setModules(prev => {
                 const exists = prev.some(
                     m => Number(m.moduleId || m.id) === Number(savedModule.moduleId || savedModule.id) ||
@@ -170,9 +188,12 @@ function CourseDetails() {
 
         setLoading(true);
         try {
+            const targetMod = modules.find(m => Number(m.moduleId || m.id) === Number(targetModuleForSlide));
             await createSlideAPI({
                 moduleId: targetModuleForSlide,
-                courseId: course.id,
+                moduleTitle: targetMod?.title || '',
+                courseId: course.id || course.courseId,
+                courseTitle: course.name || course.title || '',
                 title: slideForm.title,
                 content: slideForm.content,
                 fact: slideForm.fact,
@@ -306,13 +327,6 @@ function CourseDetails() {
                         </div>
 
                         <div className="course-detail-row">
-                            <span>Primary Grade</span>
-                            <strong>
-                                {course.primaryGrade || "Not specified"}
-                            </strong>
-                        </div>
-
-                        <div className="course-detail-row">
                             <span>Author</span>
                             <strong>{course.author}</strong>
                         </div>
@@ -408,21 +422,38 @@ function CourseDetails() {
                 </div>
 
 
-                {/* Prerequisites */}
-
-                <div className="course-description-card">
-
-                    <div className="course-detail-card-title">
-                        <BookOpen size={18} />
-                        Prerequisites
+                {/* Google Drive Course Content */}
+                {course.contentPdfUrl && (
+                    <div className="course-description-card" style={{ border: '1px solid #D8B4FE', background: '#FAF5FF' }}>
+                        <div className="course-detail-card-title" style={{ color: '#6B21A8' }}>
+                            <FolderKanban size={18} />
+                            Google Drive Course Content
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginTop: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FileText size={20} color="#7200A8" />
+                                <div>
+                                    <strong style={{ display: 'block', fontSize: '14px', color: '#1F2937' }}>
+                                        {course.contentPdfName || 'Course Content Material'}
+                                    </strong>
+                                    <span style={{ fontSize: '12px', color: '#6B7280' }}>
+                                        Educational Content / {course.subject} / {course.gradeLevel || course.grade}
+                                    </span>
+                                </div>
+                            </div>
+                            <a
+                                href={course.contentPdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="drive-view-btn"
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#7200A8', color: '#FFFFFF', borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}
+                            >
+                                <ExternalLink size={15} />
+                                View on Google Drive
+                            </a>
+                        </div>
                     </div>
-
-                    <p>
-                        {course.prerequisites ||
-                            "No prerequisites have been added yet."}
-                    </p>
-
-                </div>
+                )}
 
                 {/* Modules Section */}
 

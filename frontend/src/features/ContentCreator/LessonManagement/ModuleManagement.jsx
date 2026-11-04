@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Plus,
   Pencil,
@@ -24,7 +24,8 @@ import {
   createModuleAPI,
   updateModuleAPI,
   deleteModuleAPI,
-  deduplicateModules
+  deduplicateModules,
+  getStoredModules
 } from '../../../services/moduleService';
 import {
   fetchSlidesByModule,
@@ -76,8 +77,49 @@ function ModuleManagement() {
   // Slide Preview Modal state
   const [previewSlide, setPreviewSlide] = useState(null);
 
+  const isSyncingRef = useRef(false);
+
   useEffect(() => {
     loadInitialData();
+
+    const handleSync = async () => {
+      if (isSyncingRef.current) return;
+      isSyncingRef.current = true;
+      try {
+        const localMods = getStoredModules();
+        if (localMods.length > 0) {
+          setModules(localMods);
+        }
+        setSlides(getStoredSlides());
+      } finally {
+        isSyncingRef.current = false;
+      }
+    };
+
+    window.addEventListener('focus', handleSync);
+    window.addEventListener('storage', handleSync);
+
+    let channel = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        channel = new BroadcastChannel('edugenai_channel');
+        channel.onmessage = (event) => {
+          if (
+            event.data?.type === 'COURSES_UPDATED' ||
+            event.data?.type === 'MODULES_UPDATED' ||
+            event.data?.type === 'SLIDES_UPDATED'
+          ) {
+            handleSync();
+          }
+        };
+      }
+    } catch (_) {}
+
+    return () => {
+      window.removeEventListener('focus', handleSync);
+      window.removeEventListener('storage', handleSync);
+      if (channel) channel.close();
+    };
   }, []);
 
   const loadInitialData = async () => {
@@ -192,7 +234,8 @@ function ModuleManagement() {
         const savedModule = await createModuleAPI(
           moduleForm.title,
           moduleForm.description,
-          selectedCourse
+          selectedCourse,
+          selectedCourseObj?.title || selectedCourseObj?.name || ''
         );
         setModules((prev) => {
           const exists = prev.some(
@@ -313,9 +356,12 @@ function ModuleManagement() {
         });
         alert('Slide updated successfully!');
       } else {
+        const targetMod = modules.find((m) => Number(m.moduleId || m.id) === Number(slideTargetModuleId));
         await createSlideAPI({
           moduleId: slideTargetModuleId,
+          moduleTitle: targetMod?.title || '',
           courseId: selectedCourse,
+          courseTitle: selectedCourseObj?.title || selectedCourseObj?.name || '',
           title: slideForm.title,
           content: slideForm.content,
           fact: slideForm.fact,

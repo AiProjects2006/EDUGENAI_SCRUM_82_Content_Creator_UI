@@ -2,51 +2,15 @@ const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
 const COURSE_SERVICE_URL = import.meta.env.VITE_COURSE_SERVICE_URL || 'http://localhost:8082';
 const STORAGE_KEY = 'modules';
 
-const INITIAL_DEFAULT_MODULES = [
-  {
-    moduleId: 1,
-    courseId: 1,
-    title: 'Points, Lines, and Angles',
-    description: 'Fundamental building blocks of geometry, coordinates, and acute/obtuse angles.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 2,
-    courseId: 1,
-    title: 'Triangles and the Pythagorean Theorem',
-    description: 'Exploring triangle classifications, perimeter, area, and right-triangle formulas.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 3,
-    courseId: 1,
-    title: 'Polygons and Quadrilaterals',
-    description: 'Understanding multi-sided 2D polygons, interior angles, and regular quadrilaterals.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 4,
-    courseId: 2,
-    title: 'Introduction to Cell Biology',
-    description: 'Plant and animal cell structure, microscopic organelles, and cellular functions.',
-    createdAt: new Date().toISOString()
-  },
-  {
-    moduleId: 5,
-    courseId: 2,
-    title: 'Photosynthesis & Plant Energy',
-    description: 'How chloroplasts convert sunlight, water, and CO2 into chemical glucose energy.',
-    createdAt: new Date().toISOString()
-  }
-];
+const INITIAL_DEFAULT_MODULES = [];
+
+const isJwtToken = (tok) => {
+  return typeof tok === 'string' && tok.split('.').length === 3;
+};
 
 // Helper for cross-tab / cross-window sync
 const broadcastChange = (type, payload) => {
   try {
-    if (typeof window !== 'undefined' && window.dispatchEvent) {
-      window.dispatchEvent(new Event('storage'));
-      window.dispatchEvent(new CustomEvent(type.toLowerCase(), { detail: payload }));
-    }
     if (typeof BroadcastChannel !== 'undefined') {
       const channel = new BroadcastChannel('edugenai_channel');
       channel.postMessage({ type, payload });
@@ -96,16 +60,14 @@ export const getStoredModules = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         return deduplicateModules(parsed);
       }
     }
   } catch (e) {
     console.error('Failed reading modules from localStorage:', e);
   }
-  const defaults = deduplicateModules(INITIAL_DEFAULT_MODULES);
-  saveStoredModules(defaults);
-  return defaults;
+  return [];
 };
 
 export const saveStoredModules = (modules) => {
@@ -119,35 +81,38 @@ export const saveStoredModules = (modules) => {
 };
 
 const request = async (path, options = {}) => {
-  const token = localStorage.getItem('access_token');
+  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+  const token = isJwtToken(rawToken) ? rawToken : null;
+  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  const isMutation = options.method && options.method.toUpperCase() !== 'GET';
-
   // 1. Try Gateway
   try {
-    const res = await fetch(`${GATEWAY_URL}/api/v1${path}`, {
+    let res = await fetch(`${GATEWAY_URL}/api/v1${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${GATEWAY_URL}/api/v1${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
     }
-    // If mutation failed with client/business error on Gateway, do not duplicate request
     if (isMutation && res.status < 500) {
       const errJson = await res.json().catch(() => null);
       throw new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
-    }
-    // For GET requests, allow fallback on 403/401 (auth errors)
-    if (!isMutation && (res.status === 403 || res.status === 401)) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
-    } else if (!res.ok) {
-      console.warn(`Gateway returned ${res.status}, trying direct service...`);
     }
   } catch (err) {
     if (isMutation && !err.message?.includes('Failed to fetch') && !err.message?.includes('NetworkError')) {
@@ -157,10 +122,20 @@ const request = async (path, options = {}) => {
 
   // 2. Try Direct Course Service (port 8082)
   try {
-    const res = await fetch(`${COURSE_SERVICE_URL}/api/v1${path}`, {
+    let res = await fetch(`${COURSE_SERVICE_URL}/api/v1${path}`, {
       ...options,
       headers
     });
+
+    if (res.status === 401 && headers.Authorization) {
+      const retryHeaders = { ...headers };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${COURSE_SERVICE_URL}/api/v1${path}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
@@ -190,9 +165,9 @@ export const fetchAllModules = async () => {
   }
 
   const stored = getStoredModules();
-  // Merge API modules with stored local modules and deduplicate
+  // Merge API modules with stored local modules and deduplicate without re-broadcasting on read
   const merged = deduplicateModules([...stored, ...apiModules]);
-  saveStoredModules(merged);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   return merged;
 };
 
@@ -210,16 +185,16 @@ export const fetchCourseModules = async (courseId) => {
 };
 
 // Create a new module (or update once if matching module title exists for this course)
-export const createModuleAPI = async (title, description, courseId) => {
+export const createModuleAPI = async (title, description, courseId, courseTitle = '') => {
   const cId = Number(courseId);
   const cleanTitle = title.trim();
   const cleanDesc = description ? description.trim() : '';
 
   // Check if a module with the same title already exists for this course
-  // "it is enough update once" - update existing module instead of creating duplicate
   const currentModules = getStoredModules();
   const existing = currentModules.find(
-    m => Number(m.courseId) === cId && (m.title || m.name || '').trim().toLowerCase() === cleanTitle.toLowerCase()
+    m => ((cId && Number(m.courseId) === cId) || (courseTitle && m.courseTitle && m.courseTitle.trim().toLowerCase() === courseTitle.trim().toLowerCase())) &&
+         (m.title || m.name || '').trim().toLowerCase() === cleanTitle.toLowerCase()
   );
 
   if (existing) {
@@ -232,6 +207,7 @@ export const createModuleAPI = async (title, description, courseId) => {
     title: cleanTitle,
     description: cleanDesc,
     courseId: cId,
+    courseTitle: courseTitle || '',
     createdAt: new Date().toISOString()
   };
 
