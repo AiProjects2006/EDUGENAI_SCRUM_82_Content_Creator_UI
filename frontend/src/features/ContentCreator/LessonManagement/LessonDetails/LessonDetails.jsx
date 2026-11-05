@@ -33,9 +33,9 @@ function LessonDetails() {
                     <h1>Lesson Not Found</h1>
 
                     <button
-                        onClick={() => navigate("/lesson-management")}
+                        onClick={() => navigate("/module-management")}
                     >
-                        Back to Lesson Management
+                        Back to Module Management
                     </button>
 
                 </div>
@@ -51,10 +51,10 @@ function LessonDetails() {
 
                 <button
                     className="back-lesson-btn"
-                    onClick={() => navigate("/lesson-management")}
+                    onClick={() => navigate("/module-management")}
                 >
                     <ArrowLeft size={17} />
-                    Back to Lesson Management
+                    Back to Module Management
                 </button>
 
                 <div className="lesson-details-header">

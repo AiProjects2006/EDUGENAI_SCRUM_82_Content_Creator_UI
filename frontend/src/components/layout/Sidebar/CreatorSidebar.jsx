@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
     GraduationCap,
     LayoutDashboard,
@@ -12,11 +12,25 @@ import {
     LogOut,
     FolderOpen
 } from "lucide-react";
-
+import { useCreatorAuth } from "../../../context/CreatorAuthContext";
 import profile from "../../../assets/profile.jpg";
 import "./Sidebar.css";
 
 function CreatorSidebar() {
+    const navigate = useNavigate();
+    const { user, logout } = useCreatorAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } finally {
+            navigate("/login");
+        }
+    };
+
+    const displayName = user?.fullName || user?.username || "Alex Rivers";
+    const displayRole = user?.role === "CONTENT_CREATOR" ? "Content Creator" : (user?.role || "Content Creator");
+
     return (
         <aside className="sidebar">
             <div className="sidebar-top">
@@ -41,14 +55,10 @@ function CreatorSidebar() {
                     </li>
 
                     <li className="menu-with-submenu">
-
                         <NavLink to="/create-course">
                             <FileText size={20} />
                             <span>Course Creation</span>
                         </NavLink>
-
-                        
-
                     </li>
 
                     <li>
@@ -62,13 +72,6 @@ function CreatorSidebar() {
                         <NavLink to="/module-management">
                             <BookOpen size={20} />
                             <span>Module Management</span>
-                        </NavLink>
-                    </li>
-
-                    <li>
-                        <NavLink to="/lesson-management">
-                            <BookOpen size={20} />
-                            <span>Lesson Management</span>
                         </NavLink>
                     </li>
 
@@ -119,12 +122,17 @@ function CreatorSidebar() {
                         />
 
                         <div>
-                            <h4>Alex Rivers</h4>
-                            <p>Content Creator</p>
+                            <h4>{displayName}</h4>
+                            <p>{displayRole}</p>
                         </div>
                     </div>
 
-                    <button className="logout-btn">
+                    <button
+                        type="button"
+                        className="logout-btn"
+                        onClick={handleLogout}
+                        title="Sign Out of Creator Portal"
+                    >
                         <LogOut size={18} />
                         Logout
                     </button>

@@ -47,9 +47,9 @@ function CreateLesson() {
                     <h1>Lesson Not Found</h1>
 
                     <button
-                        onClick={() => navigate("/lesson-management")}
+                        onClick={() => navigate("/module-management")}
                     >
-                        Back to Lesson Management
+                        Back to Module Management
                     </button>
                 </div>
             </BackofficeLayout>
@@ -133,7 +133,7 @@ function CreateLesson() {
 
             alert("Lesson updated successfully!");
 
-            navigate("/lesson-management");
+            navigate("/module-management");
             return;
         }
 
@@ -163,7 +163,7 @@ function CreateLesson() {
 
         alert("Lesson saved successfully!");
 
-        navigate("/lesson-management");
+        navigate("/module-management");
     };
 
     const handleSaveDraft = () => {
@@ -193,7 +193,7 @@ function CreateLesson() {
 
         alert("Lesson saved as draft!");
 
-        navigate("/lesson-management");
+        navigate("/module-management");
     };
 
     return (
@@ -409,7 +409,7 @@ function CreateLesson() {
                                 <button
                                     type="button"
                                     className="cancel-lesson-btn"
-                                    onClick={() => navigate("/lesson-management")}
+                                    onClick={() => navigate("/module-management")}
                                 >
                                     Cancel
                                 </button>

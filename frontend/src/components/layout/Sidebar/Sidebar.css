@@ -47,12 +47,12 @@
     width:48px;
     height:48px;
     border-radius:12px;
-    background:linear-gradient(135deg,#8B5CF6,#EC4899);
+    background:linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
     display:flex;
     justify-content:center;
     align-items:center;
     color:white;
-    box-shadow:0 6px 15px rgba(139,92,246,.35);
+    box-shadow:0 6px 15px rgba(124, 58, 237, 0.35);
 }
 
 .logo h2{
@@ -108,10 +108,10 @@
 
 /* Active Menu */
 .sidebar a.active {
-    background: linear-gradient(135deg,#8B3EE0,#C026D3);
+    background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
     color: white;
     font-weight: 600;
-    box-shadow: 0 8px 18px rgba(168,85,247,0.35);
+    box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
 }
 
 .sidebar a.active svg {
