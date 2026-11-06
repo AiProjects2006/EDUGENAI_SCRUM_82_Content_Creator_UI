@@ -1,19 +1,14 @@
-/* ==========================================================================
-   CreatorAuth.css - Content Creator Authentication Styling
-   Palette: Violet #7C3AED, Indigo #6366F1, Lavender Tint #F3EEFF, Background #F8F6FF
-   Font: 'Poppins', sans-serif
-   ========================================================================== */
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 .creator-auth-page {
   min-height: 100vh;
   width: 100%;
-  background: #F8F6FF;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(243, 238, 255, 0.5) 0px, transparent 100%);
+  background: linear-gradient(
+          135deg,
+          #1B1030 0%,
+          #3B0764 50%,
+          #581C87 100%
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,8 +58,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #F3EEFF;
-  color: #7C3AED;
+  background: #F3E8FF;
+  color: #4C1D95;
+  border: 1px solid #C4B5FD;
   padding: 6px 16px;
   border-radius: 999px;
   font-size: 0.82rem;
@@ -72,20 +68,23 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 14px;
-  border: 1px solid #ECE8FF;
 }
 
 .creator-logo-icon {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+  background: linear-gradient(
+          135deg,
+          #1B1030 0%,
+          #4C1D95 100%
+  );
   color: white;
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 14px auto;
-  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 8px 18px rgba(27, 16, 48, 0.35);
 }
 
 .creator-title {
@@ -147,7 +146,7 @@
 .input-icon-left {
   position: absolute;
   left: 14px;
-  color: #9CA3AF;
+  color: #9C8EB9;
   pointer-events: none;
   display: flex;
   align-items: center;
@@ -156,21 +155,21 @@
 .creator-input {
   width: 100%;
   padding: 12px 14px 12px 42px;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid #ECE8FF;
   border-radius: 12px;
   font-size: 0.95rem;
   font-family: 'Poppins', sans-serif;
   color: #1F2937;
-  background: #FAFAFA;
+  background: #FCFAFF;
   transition: all 0.2s ease-in-out;
   box-sizing: border-box;
 }
 
 .creator-input:focus {
   outline: none;
-  border-color: #7C3AED;
+  border-color: #4C1D95;
   background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.15);
 }
 
 .creator-input::placeholder {
@@ -192,7 +191,7 @@
 }
 
 .password-toggle-btn:hover {
-  color: #7C3AED;
+  color: #4C1D95;
 }
 
 /* Quick Demo Bar */
@@ -209,12 +208,12 @@
 
 .demo-quickfill-bar span {
   font-size: 0.82rem;
-  color: #6D28D9;
+  color: #4C1D95;
   font-weight: 500;
 }
 
 .btn-quickfill {
-  background: #7C3AED;
+  background: #4C1D95;
   color: white;
   border: none;
   padding: 6px 14px;
@@ -226,13 +225,18 @@
 }
 
 .btn-quickfill:hover {
-  background: #6D28D9;
+  background: #3B0764;
 }
 
 /* Primary Action Button */
 .btn-creator-primary {
   width: 100%;
-  background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+  background: linear-gradient(
+          135deg,
+          #1B1030 0%,
+          #3B0764 50%,
+          #581C87 100%
+  );
   color: white;
   border: none;
   padding: 14px 24px;
@@ -245,15 +249,19 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 8px 18px rgba(27, 16, 48, 0.35);
   transition: all 0.25s ease;
   margin-top: 6px;
 }
 
 .btn-creator-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #6D28D9 0%, #7E22CE 100%);
+  background: linear-gradient(
+          135deg,
+          #3B0764 0%,
+          #581C87 100%
+  );
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(124, 58, 237, 0.42);
+  box-shadow: 0 10px 22px rgba(27, 16, 48, 0.45);
 }
 
 .btn-creator-primary:disabled {
@@ -313,7 +321,7 @@
   padding: 8px 16px;
   border-radius: 999px;
   background: #F3EEFF;
-  color: #6D28D9;
+  color: #4C1D95;
   font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
@@ -322,9 +330,9 @@
 }
 
 .stepper-step.active {
-  background: #7C3AED;
-  color: white;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  background: #4C1D95;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(76, 29, 149, 0.25);
 }
 
 .stepper-step.completed {
@@ -349,7 +357,7 @@
 
 .btn-creator-secondary {
   background: #F3EEFF;
-  color: #7C3AED;
+  color: #4C1D95;
   border: 1px solid #DDD6FE;
   padding: 12px 20px;
   border-radius: 12px;
@@ -364,7 +372,7 @@
 }
 
 .btn-creator-secondary:hover {
-  background: #ECE8FF;
+  background: #F3E8FF;
   border-color: #C4B5FD;
 }
 
@@ -459,8 +467,8 @@
 }
 
 .timeline-dot.current {
-  background: #7C3AED;
-  color: white;
+  background: #4C1D95;
+  color: #FFFFFF;
   box-shadow: 0 0 0 4px #EDE9FE;
   animation: pulseGlow 1.8s infinite;
 }
@@ -500,7 +508,7 @@
 .application-summary-box h5 {
   margin: 0 0 10px 0;
   font-size: 0.85rem;
-  color: #7C3AED;
+  color: #4C1D95;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -559,14 +567,14 @@
 }
 
 .creator-link {
-  color: #7C3AED;
+  color: #4C1D95;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .creator-link:hover {
-  color: #6D28D9;
+  color: #3B0764;
   text-decoration: underline;
 }
 
@@ -602,9 +610,9 @@
   align-items: center;
   gap: 6px;
   font-size: 0.82rem;
-  color: #6B7280;
+  color: #4C1D95;
   background: #F8F6FF;
-  border: 1px solid #ECE8FF;
+  border: 1px solid #DDD6FE;
   padding: 6px 14px;
   border-radius: 999px;
   text-decoration: none;
@@ -613,9 +621,9 @@
 }
 
 .portal-switch-pill:hover {
-  color: #7C3AED;
-  border-color: #DDD6FE;
-  background: #F3EEFF;
+  color: #3B0764;
+  background: #F3E8FF;
+  border-color: #C4B5FD;
 }
 
 /* Keycloak Security Badge */
@@ -624,12 +632,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #6B7280;
+  color: #DDD6FE;
   font-size: 0.8rem;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .creator-security-badge svg {
-  color: #7C3AED;
+  color: #C4B5FD;
 }
 
