@@ -82,6 +82,118 @@
     color: #000000;
 }
 
+.dashboard-enrollment-alert {
+    background: #FFFFFF;
+    border: 1px solid #D8B4FE;
+    border-left: 5px solid #6D28D9;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.08);
+}
+
+.dashboard-enrollment-alert-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.alert-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.alert-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #5B21B6, #9333EA);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.alert-title-wrap h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #1B1030;
+}
+
+.alert-title-wrap p {
+    margin: 3px 0 0;
+    font-size: 13.5px;
+    color: #6E5D88;
+}
+
+.view-all-requests-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: 1px solid #DDD6FE;
+    background: #F5F3FF;
+    color: #5B21B6;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-all-requests-btn:hover {
+    background: #EDE9FE;
+}
+
+.dashboard-pending-list {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #F3E8FF;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dashboard-pending-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #FAF8FF;
+}
+
+.pending-student-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 13.5px;
+    color: #4C3B66;
+}
+
+.pending-student-info strong {
+    color: #1B1030;
+}
+
+.quick-accept-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #5B21B6, #7C3AED);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .creator-stat-card{
     background: #FFFFFF;
     border: 1px solid #E5E7EB;

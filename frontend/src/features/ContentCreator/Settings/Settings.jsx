@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import BackofficeLayout from "../../../components/layout/BackofficeLayout";
 import CreatorSidebar from "../../../components/layout/Sidebar/CreatorSidebar.jsx";
+import { useCreatorAuth } from "../../../context/CreatorAuthContext";
+import { syncCreatorProfileAcrossCourses } from "../../../services/backofficeService";
 
 import ProfileSettings from "./components/ProfileSettings.jsx";
 import SecuritySettings from "./components/SecuritySettings.jsx";
@@ -11,10 +14,18 @@ import DangerZone from "./components/DangerZone.jsx";
 
 import "./Settings.css";
 
-function Settings() {
-    const initialSettings = {
-        fullName: "Alex Rivera",
-        email: "alex@edugenai.studio",
+function buildSettingsFromUser(user) {
+    const resolvedName =
+        user?.fullName ||
+        [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+        user?.username ||
+        "Content Creator";
+
+    return {
+        fullName: resolvedName,
+        email: user?.email || "",
+        bio: user?.bio || "",
+        avatarUrl: user?.avatarUrl || "",
         aiActivity: true,
         contentPublishing: true,
         performanceInsights: false,
@@ -22,39 +33,68 @@ function Settings() {
         startPage: "Dashboard Overview",
         analyticsSuggestions: true
     };
+}
 
-    const [settings, setSettings] = useState(initialSettings);
+function Settings() {
+    const navigate = useNavigate();
+    const { user, updateProfile, logout } = useCreatorAuth();
+
+    const [settings, setSettings] = useState(() => buildSettingsFromUser(user));
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        setSettings((prev) => ({
+            ...prev,
+            ...buildSettingsFromUser(user)
+        }));
+    }, [user?.id, user?.email, user?.fullName, user?.avatarUrl]);
 
     const updateSetting = (key, value) => {
         setSettings((prev) => ({
             ...prev,
             [key]: value
         }));
-
         setSaved(false);
     };
 
-    const handleSave = () => {
-        setSaved(true);
+    const handleSave = async () => {
+        if (saving) return;
+        setSaving(true);
+        try {
+            const updatedUser = await updateProfile({
+                fullName: settings.fullName,
+                email: settings.email,
+                bio: settings.bio,
+                avatarUrl: settings.avatarUrl || null
+            });
 
-        setTimeout(() => {
-            setSaved(false);
-        }, 3000);
+            await syncCreatorProfileAcrossCourses({
+                creatorId: updatedUser?.id,
+                creatorEmail: updatedUser?.email,
+                creatorName: updatedUser?.fullName,
+                creatorAvatar: updatedUser?.avatarUrl || null
+            });
+
+            setSaved(true);
+            setTimeout(() => {
+                setSaved(false);
+            }, 3000);
+        } finally {
+            setSaving(false);
+        }
     };
 
     const handleCancel = () => {
-        setSettings(initialSettings);
+        setSettings(buildSettingsFromUser(user));
         setSaved(false);
     };
 
-    const handleLogout = () => {
-        const confirmed = window.confirm(
-            "Are you sure you want to log out?"
-        );
-
+    const handleLogout = async () => {
+        const confirmed = window.confirm("Are you sure you want to log out?");
         if (confirmed) {
-            console.log("Logout requested");
+            await logout();
+            navigate("/login");
         }
     };
 
@@ -62,7 +102,6 @@ function Settings() {
         const confirmed = window.confirm(
             "Are you sure you want to deactivate this account?"
         );
-
         if (confirmed) {
             console.log("Account deactivation requested");
         }
@@ -75,8 +114,7 @@ function Settings() {
                     <div>
                         <h1>Creator Settings</h1>
                         <p>
-                            Manage your account, preferences, and workspace
-                            parameters.
+                            Manage your profile picture, creator identity, preferences, and workspace parameters.
                         </p>
                     </div>
                 </div>
@@ -125,7 +163,7 @@ function Settings() {
 
                 {saved && (
                     <span className="settings-saved-message">
-                        Settings saved successfully
+                        Profile & settings saved successfully!
                     </span>
                 )}
 
@@ -133,8 +171,9 @@ function Settings() {
                     type="button"
                     className="settings-save-button"
                     onClick={handleSave}
+                    disabled={saving}
                 >
-                    Save All Settings
+                    {saving ? "Saving..." : "Save All Settings"}
                 </button>
             </div>
         </BackofficeLayout>

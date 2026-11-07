@@ -1,5 +1,5 @@
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
-const COURSE_SERVICE_URL = import.meta.env.VITE_COURSE_SERVICE_URL || 'http://localhost:8082';
+const BACKOFFICE_URL = import.meta.env.VITE_BACKOFFICE_URL || 'http://localhost:8086';
 const STORAGE_KEY = 'modules';
 
 const INITIAL_DEFAULT_MODULES = [];
@@ -90,9 +90,9 @@ const request = async (path, options = {}) => {
     ...(options.headers || {})
   };
 
-  // 1. Try Gateway
+  // 1. Primary: API Gateway (:8087) -> Backoffice API (:8086) -> Course Service (:8082)
   try {
-    let res = await fetch(`${GATEWAY_URL}/api/v1${path}`, {
+    let res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${path}`, {
       ...options,
       headers
     });
@@ -100,7 +100,7 @@ const request = async (path, options = {}) => {
     if (res.status === 401 && headers.Authorization) {
       const retryHeaders = { ...headers };
       delete retryHeaders.Authorization;
-      res = await fetch(`${GATEWAY_URL}/api/v1${path}`, {
+      res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${path}`, {
         ...options,
         headers: retryHeaders
       });
@@ -120,9 +120,9 @@ const request = async (path, options = {}) => {
     }
   }
 
-  // 2. Try Direct Course Service (port 8082)
+  // 2. Offline Fallback: Backoffice API (:8086) -> Course Service (:8082)
   try {
-    let res = await fetch(`${COURSE_SERVICE_URL}/api/v1${path}`, {
+    let res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${path}`, {
       ...options,
       headers
     });
@@ -130,7 +130,7 @@ const request = async (path, options = {}) => {
     if (res.status === 401 && headers.Authorization) {
       const retryHeaders = { ...headers };
       delete retryHeaders.Authorization;
-      res = await fetch(`${COURSE_SERVICE_URL}/api/v1${path}`, {
+      res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${path}`, {
         ...options,
         headers: retryHeaders
       });

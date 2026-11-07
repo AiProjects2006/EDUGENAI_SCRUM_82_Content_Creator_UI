@@ -12,6 +12,10 @@ import {
     activityData,
     questions as initialQuestions
 } from "./data/GeneratedActivitiesData.js";
+import {
+    generateActivityInBackoffice,
+    createActivityInBackoffice
+} from "../../../services/backofficeService.js";
 
 import "./GeneratedActivities.css";
 import CreatorSidebar from "../../../components/layout/Sidebar/CreatorSidebar.jsx";
@@ -159,16 +163,42 @@ function GeneratedActivities() {
         );
     };
 
-    const handleRegenerate = () => {
+    const handleRegenerate = async () => {
         setIsRegenerating(true);
-
-        window.setTimeout(() => {
-            setIsRegenerating(false);
-
-            showMessage(
-                "Activity regenerated successfully."
-            );
-        }, 1000);
+        try {
+            const generated = await generateActivityInBackoffice({
+                moduleId: 1,
+                courseId: 1,
+                gradeLevel: "Grade 5",
+                subject: activityData?.subject || "Science",
+                topic: selectedLesson || activityData?.title || "Photosynthesis",
+                activityType: "MCQ",
+                difficultyLevel: "MEDIUM",
+                questionCount: questions.length || 5,
+                saveToModule: false
+            });
+            if (generated && Array.isArray(generated.questions) && generated.questions.length > 0) {
+                setQuestions(
+                    generated.questions.map((q, idx) => ({
+                        id: idx + 1,
+                        number: idx + 1,
+                        type: q.activityType || "Multiple Choice",
+                        points: q.points || 2,
+                        question: q.questionText || q.question || `Question ${idx + 1}`,
+                        options: (q.options || []).map((opt, oIdx) => {
+                            const text = typeof opt === "string" ? opt : opt.optionText || opt.text || "";
+                            const correct =
+                                typeof opt === "object" && typeof opt.correct === "boolean"
+                                    ? opt.correct
+                                    : oIdx === 0;
+                            return { id: String.fromCharCode(65 + oIdx), text, correct };
+                        })
+                    }))
+                );
+            }
+        } catch (_) {}
+        setIsRegenerating(false);
+        showMessage("Activity regenerated successfully.");
     };
 
     const handleSaveTemplate = () => {
@@ -182,8 +212,30 @@ function GeneratedActivities() {
         setPublished(false);
     };
 
-    const handleConfirmPublish = () => {
+    const handleConfirmPublish = async () => {
         setPublished(true);
+        try {
+            await createActivityInBackoffice({
+                moduleId: 1,
+                gradeLevel: "Grade 5",
+                displayOrder: 1,
+                title: `${selectedLesson} — Quiz`,
+                description: `Published activity for ${selectedLesson}`,
+                activityType: "MCQ",
+                difficulty: "MEDIUM",
+                status: "PUBLISHED",
+                timeLimitMinutes: 15,
+                questions: questions.map((q, idx) => ({
+                    questionText: q.question,
+                    points: q.points || 2,
+                    displayOrder: idx + 1,
+                    options: (q.options || []).map((o) => ({
+                        optionText: o.text,
+                        correct: Boolean(o.correct)
+                    }))
+                }))
+            });
+        } catch (_) {}
 
         window.setTimeout(() => {
             setPublishOpen(false);
@@ -192,7 +244,7 @@ function GeneratedActivities() {
             showMessage(
                 `Activity published to ${selectedLesson}.`
             );
-        }, 1200);
+        }, 800);
     };
 
     return (

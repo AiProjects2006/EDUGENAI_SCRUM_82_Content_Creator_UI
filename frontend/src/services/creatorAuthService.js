@@ -7,7 +7,7 @@ const KEYCLOAK_URL = import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8090
 const KEYCLOAK_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'ai-learning-platform';
 const KEYCLOAK_CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID || 'edugenai-frontend';
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
-const USER_SERVICE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081/api';
+const BACKOFFICE_URL = import.meta.env.VITE_BACKOFFICE_URL || 'http://localhost:8086';
 
 /**
  * Safely parse a base64 encoded JWT payload
@@ -111,11 +111,10 @@ export async function loginCreator({ usernameOrEmail, password }) {
     };
   }
 
-  // 3. Fallback: Authenticate via User Service (:8081) directly or API Gateway (:8087)
+  // 3. Fallback: Authenticate via API Gateway (:8087) -> Backoffice API (:8086) -> User Service (:8081)
   const endpoints = [
-    'http://localhost:8081/api/users/login',
-    'http://localhost:8081/api/auth/login',
-    `${USER_SERVICE_URL.replace(/\/api\/?$/, '')}/api/users/login`,
+    `${GATEWAY_URL}/api/v1/backoffice/auth/login`,
+    `${BACKOFFICE_URL}/api/v1/backoffice/auth/login`,
     `${GATEWAY_URL}/api/users/login`
   ];
 
@@ -134,11 +133,21 @@ export async function loginCreator({ usernameOrEmail, password }) {
 
       if (resp.ok) {
         const body = await resp.json();
-        const profile = body.user || {
+        const rawProfile = body.user || {
           username: cleanUser,
           email: cleanUser.includes('@') ? cleanUser : `${cleanUser}@creator.edugenai.com`,
           fullName: cleanUser.split('@')[0],
           role: 'CONTENT_CREATOR'
+        };
+        const fullName =
+          rawProfile.fullName ||
+          [rawProfile.firstName, rawProfile.lastName].filter(Boolean).join(' ').trim() ||
+          rawProfile.username ||
+          cleanUser.split('@')[0];
+        const profile = {
+          ...rawProfile,
+          fullName,
+          avatarUrl: rawProfile.avatarUrl || null
         };
 
         const token = body.accessToken || `session_${Date.now()}`;
@@ -221,9 +230,8 @@ export async function registerCreator({
   };
 
   const endpoints = [
-    'http://localhost:8081/api/users/register',
-    'http://localhost:8081/api/auth/register',
-    `${USER_SERVICE_URL.replace(/\/api\/?$/, '')}/api/users/register`,
+    `${GATEWAY_URL}/api/v1/backoffice/users/register`,
+    `${BACKOFFICE_URL}/api/v1/backoffice/users/register`,
     `${GATEWAY_URL}/api/users/register`
   ];
 
@@ -239,12 +247,19 @@ export async function registerCreator({
       if (resp.ok) {
         const body = await resp.json().catch(() => ({}));
 
-        const creatorProfile = body.user || {
+        const rawCreatorProfile = body.user || {
           username: cleanUsername,
           email: cleanEmail,
           fullName: `${payload.firstName} ${payload.lastName}`.trim(),
           role: 'CONTENT_CREATOR',
           accountStatus: body.accountStatus || 'PENDING_VERIFICATION'
+        };
+        const creatorProfile = {
+          ...rawCreatorProfile,
+          fullName:
+            rawCreatorProfile.fullName ||
+            [rawCreatorProfile.firstName, rawCreatorProfile.lastName].filter(Boolean).join(' ').trim() ||
+            `${payload.firstName} ${payload.lastName}`.trim()
         };
 
         const isPending = body.accountStatus === 'PENDING_VERIFICATION' || !body.accessToken;
@@ -302,9 +317,8 @@ export async function registerCreator({
  */
 async function syncSessionWithBackend(accessToken, refreshToken) {
   const syncUrls = [
-    'http://localhost:8081/api/users/keycloak-sync',
-    'http://localhost:8081/api/auth/keycloak-sync',
-    `${USER_SERVICE_URL.replace(/\/api\/?$/, '')}/api/users/keycloak-sync`,
+    `${GATEWAY_URL}/api/v1/backoffice/auth/keycloak-sync`,
+    `${BACKOFFICE_URL}/api/v1/backoffice/auth/keycloak-sync`,
     `${GATEWAY_URL}/api/users/keycloak-sync`
   ];
   for (const url of syncUrls) {
@@ -314,9 +328,120 @@ async function syncSessionWithBackend(accessToken, refreshToken) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ accessToken, refreshToken, expectedRole: 'CONTENT_CREATOR' })
       });
-      if (resp.ok) return;
+      if (resp.ok) {
+        const body = await resp.json().catch(() => null);
+        if (body && body.user) {
+          const existing = getCurrentCreatorUser() || {};
+          const mergedFullName =
+            [body.user.firstName, body.user.lastName].filter(Boolean).join(' ').trim() ||
+            existing.fullName ||
+            body.user.username;
+          const merged = {
+            ...existing,
+            ...body.user,
+            fullName: mergedFullName,
+            avatarUrl: body.user.avatarUrl || existing.avatarUrl || null
+          };
+          localStorage.setItem('current_user', JSON.stringify(merged));
+          window.dispatchEvent(new Event('storage'));
+        }
+        return;
+      }
     } catch (_) {}
   }
+}
+
+/**
+ * Update Content Creator profile (name, email, avatarUrl, bio) in User Service & session
+ */
+export async function updateCreatorProfile(updates = {}) {
+  const current = getCurrentCreatorUser() || {};
+  const fullName = (updates.fullName ?? current.fullName ?? '').trim();
+  const parts = fullName.split(/\s+/).filter(Boolean);
+  const firstName = updates.firstName || parts[0] || current.firstName || 'Content';
+  const lastName = updates.lastName || (parts.length > 1 ? parts.slice(1).join(' ') : current.lastName || 'Creator');
+  const email = (updates.email ?? current.email ?? '').trim();
+  const avatarUrl = updates.avatarUrl !== undefined ? updates.avatarUrl : (current.avatarUrl || null);
+  const bio = updates.bio !== undefined ? updates.bio : (current.bio || '');
+  const qualifications = updates.qualifications !== undefined ? updates.qualifications : (current.qualifications || '');
+
+  const payload = {
+    firstName,
+    lastName,
+    email,
+    contactNumber: updates.contactNumber || current.contactNumber || '0770000000',
+    avatarUrl,
+    bio,
+    qualifications
+  };
+
+  let savedBackendUser = null;
+  const userId = updates.id || current.id;
+  if (userId) {
+    const rawToken = localStorage.getItem('access_token');
+    const decoded = parseJwtPayload(rawToken);
+    const hasUnexpiredJwt =
+      decoded && (!decoded.exp || decoded.exp * 1000 > Date.now() + 15000);
+    if (!hasUnexpiredJwt && rawToken && rawToken.split('.').length === 3) {
+      localStorage.setItem('access_token', 'session_active');
+    }
+    const headers = {
+      'Content-Type': 'application/json',
+      ...(hasUnexpiredJwt ? { Authorization: `Bearer ${rawToken}` } : {})
+    };
+    const updateEndpoints = [
+      `${GATEWAY_URL}/api/v1/backoffice/users/${userId}`,
+      `${BACKOFFICE_URL}/api/v1/backoffice/users/${userId}`,
+      `${GATEWAY_URL}/api/users/${userId}`,
+      `http://localhost:8081/api/users/${userId}`
+    ];
+    for (const base of updateEndpoints) {
+      try {
+        let resp = await fetch(base, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(payload)
+        });
+        if (resp.status === 401 && headers.Authorization) {
+          localStorage.setItem('access_token', 'session_active');
+          resp = await fetch(base, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+        if (resp.ok) {
+          const json = await resp.json().catch(() => null);
+          savedBackendUser = json?.data !== undefined ? json.data : json;
+          break;
+        }
+      } catch (_) {}
+    }
+  }
+
+  const mergedUser = {
+    ...current,
+    ...(savedBackendUser || {}),
+    firstName,
+    lastName,
+    fullName: `${firstName} ${lastName}`.trim(),
+    email,
+    avatarUrl,
+    bio,
+    qualifications
+  };
+
+  localStorage.setItem('current_user', JSON.stringify(mergedUser));
+  window.dispatchEvent(new Event('storage'));
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      const ch = new BroadcastChannel('edugenai_channel');
+      ch.postMessage({ type: 'CREATOR_PROFILE_UPDATED', payload: mergedUser, timestamp: Date.now() });
+      ch.close();
+    }
+  } catch (_) {}
+
+  return mergedUser;
 }
 
 /**
@@ -382,6 +507,7 @@ export default {
   loginCreator,
   registerCreator,
   logoutCreator,
+  updateCreatorProfile,
   isCreatorAuthenticated,
   getCurrentCreatorUser,
   getCreatorAuthHeaders,

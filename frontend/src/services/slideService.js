@@ -1,5 +1,5 @@
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
-const RESOURCE_SERVICE_URL = import.meta.env.VITE_RESOURCE_SERVICE_URL || 'http://localhost:8085';
+const BACKOFFICE_URL = import.meta.env.VITE_BACKOFFICE_URL || 'http://localhost:8086';
 const STORAGE_KEY = 'learning_resources';
 
 // Default initial slides for demonstration
@@ -86,7 +86,7 @@ export const saveStoredSlides = (slides) => {
 };
 
 /**
- * Make API request with dual fallback: Gateway -> Direct Resource Service -> LocalStorage
+ * Make API request via API Gateway (:8087) -> Backoffice API (:8086) -> Learning Resource Service (:8085)
  */
 const request = async (path, options = {}) => {
   const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
@@ -94,13 +94,13 @@ const request = async (path, options = {}) => {
   const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  // 1. Try Gateway
+  // 1. Primary: API Gateway (:8087) -> Backoffice API (:8086) -> Learning Resource Service (:8085)
   try {
-    let res = await fetch(`${GATEWAY_URL}/api${path}`, {
+    let res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${path}`, {
       ...options,
       headers
     });
@@ -108,7 +108,7 @@ const request = async (path, options = {}) => {
     if (res.status === 401 && headers.Authorization) {
       const retryHeaders = { ...headers };
       delete retryHeaders.Authorization;
-      res = await fetch(`${GATEWAY_URL}/api${path}`, {
+      res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${path}`, {
         ...options,
         headers: retryHeaders
       });
@@ -130,9 +130,9 @@ const request = async (path, options = {}) => {
     }
   }
 
-  // 2. Try Direct Resource Service (port 8085)
+  // 2. Offline Fallback: Backoffice API (:8086) -> Learning Resource Service (:8085)
   try {
-    let res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+    let res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${path}`, {
       ...options,
       headers
     });
@@ -140,7 +140,7 @@ const request = async (path, options = {}) => {
     if (res.status === 401 && headers.Authorization) {
       const retryHeaders = { ...headers };
       delete retryHeaders.Authorization;
-      res = await fetch(`${RESOURCE_SERVICE_URL}/api${path}`, {
+      res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${path}`, {
         ...options,
         headers: retryHeaders
       });

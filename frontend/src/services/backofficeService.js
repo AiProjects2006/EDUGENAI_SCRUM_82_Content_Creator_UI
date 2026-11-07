@@ -1,5 +1,6 @@
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8087';
 const BACKOFFICE_URL = import.meta.env.VITE_BACKOFFICE_URL || 'http://localhost:8086';
+const ENROLLMENT_URL = import.meta.env.VITE_ENROLLMENT_SERVICE_URL || 'http://localhost:8084';
 const STORAGE_KEY = 'courses';
 
 const DEFAULT_COURSES = [];
@@ -45,7 +46,47 @@ if (typeof window !== 'undefined') {
 }
 
 const isJwtToken = (tok) => {
-  return typeof tok === 'string' && tok.split('.').length === 3;
+  if (typeof tok !== 'string') return false;
+  const parts = tok.split('.');
+  if (parts.length !== 3 || parts[0].length < 8) return false;
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded));
+    if (payload && typeof payload.exp === 'number') {
+      // Treat token as expired 15 seconds before exp so Gateway never rejects it with 401
+      if (payload.exp * 1000 <= Date.now() + 15000) {
+        return false;
+      }
+    }
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
+
+const getValidAccessToken = () => {
+  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
+  if (!rawToken) return null;
+  if (isJwtToken(rawToken)) {
+    return rawToken;
+  }
+  // If a previously stored 3-part JWT has expired, downgrade to session marker so future polls never send an expired Bearer header
+  if (typeof rawToken === 'string' && rawToken.split('.').length === 3) {
+    try {
+      localStorage.setItem('access_token', 'session_active');
+    } catch (_) {}
+  }
+  return null;
+};
+
+const clearInvalidBearerToken = () => {
+  try {
+    const rawToken = localStorage.getItem('access_token');
+    if (rawToken && rawToken.split('.').length === 3) {
+      localStorage.setItem('access_token', 'session_active');
+    }
+  } catch (_) {}
 };
 
 const broadcastCourseChange = (type = 'COURSES_UPDATED', payload = null) => {
@@ -102,50 +143,19 @@ const saveStoredLocalCourses = (courses) => {
 };
 
 /**
- * Universal backoffice API request with automatic fallback from Gateway to direct Backoffice API
+ * Universal backoffice API request routed through API Gateway (:8087) -> Backoffice API (:8086)
+ * per system architecture diagram, with offline fallback to Backoffice API (:8086).
  */
 const requestBackoffice = async (endpoint, options = {}) => {
-  const rawToken = localStorage.getItem('access_token') || localStorage.getItem('token');
-  const token = isJwtToken(rawToken) ? rawToken : null;
+  const token = getValidAccessToken();
   const isMutation = options.method && options.method.toUpperCase() !== 'GET';
   const headers = {
     'Content-Type': 'application/json',
-    ...(isMutation && token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
   };
 
-  // Primary: Direct Backoffice API port 8086 as per system architecture diagram
-  try {
-    let res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
-      ...options,
-      headers
-    });
-
-    // If 401 returned, token may be expired or unaccepted; retry once unauthenticated
-    if (res.status === 401 && headers.Authorization) {
-      const retryHeaders = { ...headers };
-      delete retryHeaders.Authorization;
-      res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
-        ...options,
-        headers: retryHeaders
-      });
-    }
-
-    if (res.ok) {
-      const json = await res.json();
-      return json.data !== undefined ? json.data : json;
-    }
-    if (isMutation && res.status < 500) {
-      const errJson = await res.json().catch(() => null);
-      throw new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
-    }
-  } catch (backofficeErr) {
-    if (isMutation && !backofficeErr.message?.includes('Failed to fetch') && !backofficeErr.message?.includes('NetworkError')) {
-      throw backofficeErr;
-    }
-  }
-
-  // Fallback: via API Gateway
+  // Primary: API Gateway (:8087) -> Backoffice API (:8086) as per system architecture diagram
   try {
     let res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${endpoint}`, {
       ...options,
@@ -153,6 +163,7 @@ const requestBackoffice = async (endpoint, options = {}) => {
     });
 
     if (res.status === 401 && headers.Authorization) {
+      clearInvalidBearerToken();
       const retryHeaders = { ...headers };
       delete retryHeaders.Authorization;
       res = await fetch(`${GATEWAY_URL}/api/v1/backoffice${endpoint}`, {
@@ -162,13 +173,48 @@ const requestBackoffice = async (endpoint, options = {}) => {
     }
 
     if (res.ok) {
-      const json = await res.json();
-      return json.data !== undefined ? json.data : json;
+      const json = await res.json().catch(() => ({}));
+      return json && json.data !== undefined ? json.data : json;
+    }
+    if (isMutation && res.status < 500) {
+      const errJson = await res.json().catch(() => null);
+      throw new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
+    }
+  } catch (gatewayErr) {
+    if (isMutation && !gatewayErr.message?.includes('Failed to fetch') && !gatewayErr.message?.includes('NetworkError')) {
+      throw gatewayErr;
+    }
+  }
+
+  // Offline Fallback: Direct Backoffice API (:8086) if API Gateway container is down
+  try {
+    const cleanHeaders = { ...headers };
+    if (!getValidAccessToken()) {
+      delete cleanHeaders.Authorization;
+    }
+    let res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
+      ...options,
+      headers: cleanHeaders
+    });
+
+    if (res.status === 401 && cleanHeaders.Authorization) {
+      clearInvalidBearerToken();
+      const retryHeaders = { ...cleanHeaders };
+      delete retryHeaders.Authorization;
+      res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice${endpoint}`, {
+        ...options,
+        headers: retryHeaders
+      });
+    }
+
+    if (res.ok) {
+      const json = await res.json().catch(() => ({}));
+      return json && json.data !== undefined ? json.data : json;
     }
     const errJson = await res.json().catch(() => null);
     throw new Error((errJson && errJson.message) || `Request failed with status ${res.status}`);
-  } catch (gatewayErr) {
-    throw new Error(gatewayErr.message || 'Backoffice API currently unreachable');
+  } catch (backofficeErr) {
+    throw new Error(backofficeErr.message || 'Backoffice API currently unreachable');
   }
 };
 
@@ -245,8 +291,11 @@ export const createCourseInBackoffice = async (courseData) => {
     contentPdfDriveId: courseData.contentPdfDriveId,
     thumbnail: courseData.thumbnail || null,
     thumbnailUrl: courseData.thumbnailUrl || null,
-    author: courseData.author || 'Alex Rivers',
-    creator: courseData.author || 'Alex Rivers',
+    author: courseData.author || courseData.creator || 'Content Creator',
+    creator: courseData.creator || courseData.author || 'Content Creator',
+    creatorId: courseData.creatorId || null,
+    creatorEmail: courseData.creatorEmail || null,
+    creatorAvatar: courseData.creatorAvatar || null,
     enrollments: 0,
     completion: '0%',
     status: courseData.status || 'Published',
@@ -386,13 +435,19 @@ export const uploadCourseContentPdf = async (file, grade = 'Grade 3', subject = 
   const token = localStorage.getItem('access_token');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-  // 1. Try API Gateway
+  // 1. Primary: API Gateway (:8087) -> Backoffice API (:8086) -> AI Service (:8000/upload-pdf)
   try {
-    const res = await fetch(`${GATEWAY_URL}/api/v1/backoffice/courses/upload-pdf`, {
+    let res = await fetch(`${GATEWAY_URL}/api/v1/backoffice/courses/upload-pdf`, {
       method: 'POST',
       headers,
       body: formData
     });
+    if (res.status === 401 && headers.Authorization) {
+      res = await fetch(`${GATEWAY_URL}/api/v1/backoffice/courses/upload-pdf`, {
+        method: 'POST',
+        body: formData
+      });
+    }
     if (res.ok) {
       const json = await res.json();
       return json.data !== undefined ? json.data : json;
@@ -401,7 +456,7 @@ export const uploadCourseContentPdf = async (file, grade = 'Grade 3', subject = 
     console.warn('API Gateway Google Drive upload fallback:', err.message);
   }
 
-  // 2. Try Direct Backoffice service
+  // 2. Offline Fallback: Backoffice API (:8086) -> AI Service (:8000/upload-pdf)
   try {
     const res = await fetch(`${BACKOFFICE_URL}/api/v1/backoffice/courses/upload-pdf`, {
       method: 'POST',
@@ -413,24 +468,10 @@ export const uploadCourseContentPdf = async (file, grade = 'Grade 3', subject = 
       return json.data !== undefined ? json.data : json;
     }
   } catch (err) {
-    console.warn('Direct Backoffice Google Drive upload fallback:', err.message);
+    console.warn('Backoffice Google Drive upload fallback:', err.message);
   }
 
-  // 3. Try Direct AI service
-  try {
-    const res = await fetch('http://localhost:8000/upload-pdf', {
-      method: 'POST',
-      body: formData
-    });
-    if (res.ok) {
-      const json = await res.json();
-      return json;
-    }
-  } catch (err) {
-    console.warn('Direct AI Service upload-pdf fallback:', err.message);
-  }
-
-  // 4. Reliable Google Drive mapped record using standard folder IDs
+  // 3. Reliable Google Drive mapped record using standard folder IDs
   let folderId = '1UrzYTDOdnyDbp0SLGqh6jCmofogU6be8';
   if (/math/i.test(normalizedSubject)) {
     if (/3/i.test(normalizedGrade)) folderId = '1IL6bSf4FzS4iiS6yxLegHhgO2iFgvSXD';
@@ -463,4 +504,268 @@ export const uploadCourseContentPdf = async (file, grade = 'Grade 3', subject = 
     driveSynced: true,
     serviceAccountEmail: 'google-drive-reader@edugenai-504606.iam.gserviceaccount.com'
   };
+};
+
+/**
+ * BFF Platform Overview & Enrollments (Gateway :8087 -> Backoffice API :8086 -> User + Course + Activity + Enrollment Services)
+ */
+export const fetchBackofficeOverview = async () => {
+  return requestBackoffice('/overview');
+};
+
+export const fetchBackofficeEnrollments = async () => {
+  try {
+    const data = await requestBackoffice('/enrollments');
+    if (Array.isArray(data)) {
+      localStorage.setItem('edugenai_enrollments', JSON.stringify(data));
+      return data;
+    }
+  } catch (err) {
+    console.warn('Backoffice enrollments fallback to localStorage:', err.message);
+  }
+  try {
+    const raw = localStorage.getItem('edugenai_enrollments');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (_) {}
+  return [];
+};
+
+export const fetchCreatorEnrollmentRequests = async ({
+  creatorId = null,
+  creatorEmail = '',
+  creatorName = '',
+  status = ''
+} = {}) => {
+  const filterForCreator = (list, ownedIds = new Set()) => {
+    const hasFilter = Boolean(creatorId || creatorEmail || creatorName || ownedIds.size > 0);
+    if (!hasFilter) return list;
+    return list.filter((item) => {
+      if (!item) return false;
+      const idMatch = creatorId && String(item.creatorId) === String(creatorId);
+      const emailMatch =
+        creatorEmail &&
+        item.creatorEmail &&
+        item.creatorEmail.toLowerCase() === creatorEmail.toLowerCase();
+      const nameMatch =
+        creatorName &&
+        item.creatorName &&
+        item.creatorName.toLowerCase() === creatorName.toLowerCase();
+      const courseMatch = item.courseId && ownedIds.has(String(item.courseId));
+      return idMatch || emailMatch || nameMatch || courseMatch;
+    });
+  };
+
+  let ownedCourseIds = new Set();
+  try {
+    const courses = getStoredLocalCourses();
+    courses.forEach((c) => {
+      if (!c) return;
+      const idMatch = creatorId && String(c.creatorId) === String(creatorId);
+      const emailMatch =
+        creatorEmail &&
+        c.creatorEmail &&
+        c.creatorEmail.toLowerCase() === creatorEmail.toLowerCase();
+      const nameMatch =
+        creatorName &&
+        (c.creator || c.author) &&
+        String(c.creator || c.author).toLowerCase() === creatorName.toLowerCase();
+      if (idMatch || emailMatch || nameMatch) {
+        if (c.id) ownedCourseIds.add(String(c.id));
+        if (c.courseId) ownedCourseIds.add(String(c.courseId));
+      }
+    });
+  } catch (_) {}
+
+  try {
+    const params = new URLSearchParams();
+    if (creatorId) params.append('creatorId', String(creatorId));
+    if (creatorEmail) params.append('creatorEmail', creatorEmail);
+    if (creatorName) params.append('creatorName', creatorName);
+    if (status && status.toUpperCase() !== 'ALL') params.append('status', status);
+
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    const data = await requestBackoffice(`/enrollments${qs}`);
+    if (Array.isArray(data)) {
+      const scoped = filterForCreator(data, ownedCourseIds);
+      return scoped.length > 0 || ownedCourseIds.size > 0 ? scoped : data;
+    }
+  } catch (err) {
+    console.warn('Creator enrollment requests fallback:', err.message);
+  }
+
+  const localAll = await fetchBackofficeEnrollments();
+  return filterForCreator(localAll, ownedCourseIds);
+};
+
+export const respondToEnrollmentRequest = async (
+  enrollmentId,
+  { status = 'ACTIVE', reason = '', changedBy = 'Content Creator' } = {}
+) => {
+  const normalizedStatus =
+    status.toUpperCase() === 'ACCEPTED' || status.toUpperCase() === 'APPROVED'
+      ? 'ACTIVE'
+      : status.toUpperCase() === 'DECLINED'
+      ? 'REJECTED'
+      : status.toUpperCase();
+
+  const payload = {
+    status: normalizedStatus,
+    reason: reason || null,
+    changedBy
+  };
+
+  let updatedRecord = null;
+
+  // 1. Primary path: Gateway (:8087) -> Backoffice API (:8086) -> Enrollment Service (:8084)
+  try {
+    updatedRecord = await requestBackoffice(`/enrollments/${enrollmentId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+  } catch (_) {
+    // 2. Resilient fallback: Gateway (:8087) -> Enrollment Service (:8084) directly
+    // (handles case where Backoffice API JVM has not been restarted yet)
+    const token = getValidAccessToken();
+    const directHeaders = {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+    const fallbackUrls = [
+      `${GATEWAY_URL}/api/v1/enrollments/${enrollmentId}/status`,
+      `${ENROLLMENT_URL}/api/v1/enrollments/${enrollmentId}/status`
+    ];
+    for (const url of fallbackUrls) {
+      try {
+        let resp = await fetch(url, {
+          method: 'PUT',
+          headers: directHeaders,
+          body: JSON.stringify(payload)
+        });
+        if (resp.status === 401 && directHeaders.Authorization) {
+          clearInvalidBearerToken();
+          const retryH = { ...directHeaders };
+          delete retryH.Authorization;
+          resp = await fetch(url, {
+            method: 'PUT',
+            headers: retryH,
+            body: JSON.stringify(payload)
+          });
+        }
+        if (resp.ok) {
+          const json = await resp.json().catch(() => null);
+          updatedRecord = json && json.data !== undefined ? json.data : json;
+          break;
+        }
+      } catch (_) {}
+    }
+  }
+
+  try {
+    const raw = localStorage.getItem('edugenai_enrollments');
+    const existingList = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(existingList)) {
+      const nextList = existingList.map((e) =>
+        String(e.enrollmentId || e.id) === String(enrollmentId)
+          ? {
+              ...e,
+              ...(updatedRecord || {}),
+              status: normalizedStatus,
+              rejectionReason: normalizedStatus === 'REJECTED' ? reason : null,
+              respondedAt: new Date().toISOString()
+            }
+          : e
+      );
+      localStorage.setItem('edugenai_enrollments', JSON.stringify(nextList));
+    }
+  } catch (_) {}
+
+  broadcastCourseChange('ENROLLMENTS_UPDATED', {
+    enrollmentId,
+    status: normalizedStatus,
+    record: updatedRecord
+  });
+
+  return (
+    updatedRecord || {
+      enrollmentId,
+      status: normalizedStatus,
+      rejectionReason: normalizedStatus === 'REJECTED' ? reason : null,
+      respondedAt: new Date().toISOString()
+    }
+  );
+};
+
+export const syncCreatorProfileAcrossCourses = async ({
+  creatorId,
+  creatorEmail,
+  creatorName,
+  creatorAvatar
+}) => {
+  try {
+    const allCourses = await fetchCoursesFromBackoffice();
+    const owned = (Array.isArray(allCourses) ? allCourses : []).filter((c) => {
+      if (!c) return false;
+      const idMatch = creatorId && String(c.creatorId) === String(creatorId);
+      const emailMatch =
+        creatorEmail &&
+        c.creatorEmail &&
+        c.creatorEmail.toLowerCase() === creatorEmail.toLowerCase();
+      return idMatch || emailMatch;
+    });
+    await Promise.all(
+      owned.map((c) =>
+        updateCourseInBackoffice(c.id || c.courseId, {
+          title: c.title || c.name,
+          subject: c.subject,
+          gradeLevel: c.gradeLevel || c.grade,
+          description: c.description,
+          status: c.status,
+          creatorId,
+          creator: creatorName,
+          author: creatorName,
+          creatorEmail,
+          creatorAvatar
+        }).catch(() => null)
+      )
+    );
+  } catch (_) {}
+};
+
+/**
+ * BFF Activity Management & AI Generation (Gateway :8087 -> Backoffice API :8086 -> Activity Service :8083 -> AI Service :8000)
+ */
+export const generateActivityInBackoffice = async (payload) => {
+  return requestBackoffice('/activities/generate', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+};
+
+export const createActivityInBackoffice = async (payload) => {
+  return requestBackoffice('/activities', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+};
+
+export const fetchActivitiesFromBackoffice = async (moduleId = null) => {
+  const qs = moduleId ? `?moduleId=${encodeURIComponent(moduleId)}` : '';
+  const data = await requestBackoffice(`/activities${qs}`);
+  return Array.isArray(data) ? data : [];
+};
+
+export const updateActivityInBackoffice = async (id, payload) => {
+  return requestBackoffice(`/activities/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload)
+  });
+};
+
+export const deleteActivityInBackoffice = async (id) => {
+  return requestBackoffice(`/activities/${id}`, {
+    method: 'DELETE'
+  });
 };

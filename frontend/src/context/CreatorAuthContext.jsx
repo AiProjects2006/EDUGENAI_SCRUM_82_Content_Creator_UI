@@ -4,7 +4,8 @@ import {
   isCreatorAuthenticated,
   loginCreator as serviceLogin,
   registerCreator as serviceRegister,
-  logoutCreator as serviceLogout
+  logoutCreator as serviceLogout,
+  updateCreatorProfile as serviceUpdateProfile
 } from '../services/creatorAuthService';
 
 const CreatorAuthContext = createContext(null);
@@ -60,6 +61,12 @@ export function CreatorAuthProvider({ children }) {
     }
   };
 
+  const updateProfile = async (updates) => {
+    const updatedUser = await serviceUpdateProfile(updates);
+    setUser(updatedUser);
+    return updatedUser;
+  };
+
   return (
     <CreatorAuthContext.Provider
       value={{
@@ -68,7 +75,8 @@ export function CreatorAuthProvider({ children }) {
         loading,
         login,
         register,
-        logout
+        logout,
+        updateProfile
       }}
     >
       {children}

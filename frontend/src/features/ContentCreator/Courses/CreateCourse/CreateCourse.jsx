@@ -9,6 +9,7 @@ import {
     fetchSubjectsFromBackoffice,
     uploadCourseContentPdf
 } from "../../../../services/backofficeService";
+import { useCreatorAuth } from "../../../../context/CreatorAuthContext";
 import {
     Archive,
     UploadCloud,
@@ -32,6 +33,13 @@ function CreateCourse() {
     const navigate = useNavigate();
     const { id } = useParams();
     const isEditMode = Boolean(id);
+    const { user } = useCreatorAuth();
+
+    const creatorFullName =
+        user?.fullName ||
+        [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+        user?.username ||
+        "Content Creator";
 
     const [availableSubjects, setAvailableSubjects] = useState(ALLOWED_SUBJECTS);
     const [courseToEdit, setCourseToEdit] = useState(null);
@@ -174,8 +182,11 @@ function CreateCourse() {
                 contentPdfName: driveResult?.fileName || (selectedPdf ? selectedPdf.name : null),
                 contentPdfUrl: driveResult?.webViewLink || driveResult?.folderUrl || null,
                 contentPdfDriveId: driveResult?.fileId || null,
-                author: "Alex Rivers",
-                creator: "Alex Rivers",
+                author: creatorFullName,
+                creator: creatorFullName,
+                creatorId: user?.id || null,
+                creatorEmail: user?.email || null,
+                creatorAvatar: user?.avatarUrl || null,
                 status: "Published"
             };
 
@@ -217,8 +228,11 @@ function CreateCourse() {
                 contentPdfName: driveResult?.fileName || (selectedPdf ? selectedPdf.name : null),
                 contentPdfUrl: driveResult?.webViewLink || driveResult?.folderUrl || null,
                 contentPdfDriveId: driveResult?.fileId || null,
-                author: "Alex Rivers",
-                creator: "Alex Rivers",
+                author: creatorFullName,
+                creator: creatorFullName,
+                creatorId: user?.id || null,
+                creatorEmail: user?.email || null,
+                creatorAvatar: user?.avatarUrl || null,
                 status: "Draft"
             };
 

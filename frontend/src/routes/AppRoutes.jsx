@@ -12,6 +12,7 @@ import ContentCreation from "../features/ContentCreator/ContentCreation/ContentC
 import CreateLesson from "../features/ContentCreator/CreateLesson/CreateLesson";
 import CourseManagement from "../features/ContentCreator/CourseManagement/CourseManagement";
 import CourseDetails from "../features/ContentCreator/CourseManagement/CourseDetails/CourseDetails";
+import EnrollmentRequests from "../features/ContentCreator/EnrollmentRequests/EnrollmentRequests";
 import ModuleManagement from "../features/ContentCreator/LessonManagement/ModuleManagement";
 import LessonDetails from "../features/ContentCreator/LessonManagement/LessonDetails/LessonDetails";
 import StudentEngagement from "../features/ContentCreator/StudentEngagement/StudentEngagement";
@@ -68,6 +69,15 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <CourseManagement />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/enrollment-requests"
+                element={
+                    <ProtectedRoute>
+                        <EnrollmentRequests />
                     </ProtectedRoute>
                 }
             />

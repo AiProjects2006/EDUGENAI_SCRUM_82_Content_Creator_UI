@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     GraduationCap,
@@ -8,17 +9,68 @@ import {
     BarChart3,
     Sparkles,
     Users,
+    UserCheck,
     Settings,
     LogOut,
     FolderOpen
 } from "lucide-react";
 import { useCreatorAuth } from "../../../context/CreatorAuthContext";
+import { fetchCreatorEnrollmentRequests } from "../../../services/backofficeService";
 import profile from "../../../assets/profile.jpg";
 import "./Sidebar.css";
 
 function CreatorSidebar() {
     const navigate = useNavigate();
     const { user, logout } = useCreatorAuth();
+    const [pendingCount, setPendingCount] = useState(0);
+
+    const displayName =
+        user?.fullName ||
+        [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+        user?.username ||
+        "Content Creator";
+    const displayRole =
+        user?.role === "CONTENT_CREATOR" ? "Content Creator" : (user?.role || "Content Creator");
+    const avatarSrc = user?.avatarUrl || profile;
+
+    const loadPendingRequests = useCallback(async () => {
+        try {
+            const list = await fetchCreatorEnrollmentRequests({
+                creatorId: user?.id,
+                creatorEmail: user?.email,
+                creatorName: displayName
+            });
+            if (Array.isArray(list)) {
+                const pending = list.filter(
+                    (r) => String(r.status || "").toUpperCase() === "PENDING"
+                ).length;
+                setPendingCount(pending);
+            }
+        } catch (_) {}
+    }, [user?.id, user?.email, displayName]);
+
+    useEffect(() => {
+        loadPendingRequests();
+        const interval = setInterval(loadPendingRequests, 12000);
+        let channel = null;
+        try {
+            if (typeof BroadcastChannel !== "undefined") {
+                channel = new BroadcastChannel("edugenai_channel");
+                channel.onmessage = (evt) => {
+                    if (
+                        evt?.data?.type === "ENROLLMENTS_UPDATED" ||
+                        evt?.data?.type === "ENROLLMENT_REQUESTED"
+                    ) {
+                        loadPendingRequests();
+                    }
+                };
+            }
+        } catch (_) {}
+        return () => {
+            clearInterval(interval);
+            if (channel) channel.close();
+        };
+    }, [loadPendingRequests]);
 
     const handleLogout = async () => {
         try {
@@ -27,9 +79,6 @@ function CreatorSidebar() {
             navigate("/login");
         }
     };
-
-    const displayName = user?.fullName || user?.username || "Alex Rivers";
-    const displayRole = user?.role === "CONTENT_CREATOR" ? "Content Creator" : (user?.role || "Content Creator");
 
     return (
         <aside className="sidebar">
@@ -65,6 +114,16 @@ function CreatorSidebar() {
                         <NavLink to="/course-management">
                             <FolderOpen size={20} />
                             <span>Course Management</span>
+                        </NavLink>
+                    </li>
+
+                    <li>
+                        <NavLink to="/enrollment-requests">
+                            <UserCheck size={20} />
+                            <span className="sidebar-label-grow">Enrollment Requests</span>
+                            {pendingCount > 0 && (
+                                <span className="sidebar-nav-badge">{pendingCount}</span>
+                            )}
                         </NavLink>
                     </li>
 
@@ -116,8 +175,8 @@ function CreatorSidebar() {
                 <div className="sidebar-footer">
                     <div className="profile">
                         <img
-                            src={profile}
-                            alt="Profile"
+                            src={avatarSrc}
+                            alt={displayName}
                             className="profile-image"
                         />
 

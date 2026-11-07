@@ -11,14 +11,15 @@ import {
     defaultGeneratorSettings
 } from "./data/ActivityData.js";
 
-import { fetchCoursesFromBackoffice } from "../../../services/backofficeService.js";
+import {
+    fetchCoursesFromBackoffice,
+    generateActivityInBackoffice,
+    createActivityInBackoffice
+} from "../../../services/backofficeService.js";
 import { fetchAllModules } from "../../../services/moduleService.js";
 import { fetchSlidesByModule, getStoredSlides } from "../../../services/slideService.js";
 
 import "./Activities.css";
-
-const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || "http://localhost:8087";
-const ACTIVITY_SERVICE_URL = import.meta.env.VITE_ACTIVITY_SERVICE_URL || "http://localhost:8083";
 
 function mapGeneratedQuestionToEditor(q, idx, activityType) {
     const rawOpts = Array.isArray(q.options) ? q.options : [];
@@ -383,6 +384,7 @@ function Activities() {
         const payload = {
             moduleId: modIdNum,
             courseId: cIdNum,
+            gradeLevel: selectedCourse?.grade || selectedCourse?.gradeLevel || "Grade 5",
             subject: subjectName,
             topic: modTitle,
             activityType: settings.activityType,
@@ -393,24 +395,15 @@ function Activities() {
         };
 
         let generated = null;
-        for (const baseUrl of [GATEWAY_URL, ACTIVITY_SERVICE_URL]) {
-            try {
-                const res = await fetch(`${baseUrl}/api/v1/activities/generate`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-                if (res.ok) {
-                    const body = await res.json();
-                    const data = body?.data !== undefined ? body.data : body;
-                    if (data && Array.isArray(data.questions) && data.questions.length > 0) {
-                        generated = data.questions.map((q, idx) =>
-                            mapGeneratedQuestionToEditor(q, idx, settings.activityType)
-                        );
-                        break;
-                    }
-                }
-            } catch (_) {}
+        try {
+            const data = await generateActivityInBackoffice(payload);
+            if (data && Array.isArray(data.questions) && data.questions.length > 0) {
+                generated = data.questions.map((q, idx) =>
+                    mapGeneratedQuestionToEditor(q, idx, settings.activityType)
+                );
+            }
+        } catch (err) {
+            console.warn("Backoffice AI Activity generation fallback:", err.message);
         }
 
         if (!generated || generated.length === 0) {
@@ -515,6 +508,8 @@ function Activities() {
 
         const createPayload = {
             moduleId: modIdNum,
+            gradeLevel: selectedCourse?.grade || selectedCourse?.gradeLevel || "Grade 5",
+            displayOrder: 1,
             title: actTitle,
             description: `Generated ${settings.activityType} activity for ${courseName} (${modTitle})`,
             activityType: settings.activityType,
@@ -528,6 +523,7 @@ function Activities() {
                 return {
                     questionText: q.question || `Question ${idx + 1}`,
                     points: q.points || 2,
+                    displayOrder: idx + 1,
                     orderIndex: idx + 1,
                     correctAnswer: resolvedCorrect,
                     passage: q.passage || null,
@@ -566,20 +562,11 @@ function Activities() {
         };
 
         let persistedId = null;
-        for (const baseUrl of [GATEWAY_URL, ACTIVITY_SERVICE_URL]) {
-            try {
-                const res = await fetch(`${baseUrl}/api/v1/activities`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(createPayload)
-                });
-                if (res.ok) {
-                    const body = await res.json();
-                    const data = body?.data !== undefined ? body.data : body;
-                    persistedId = data?.activityId || data?.id || null;
-                    break;
-                }
-            } catch (_) {}
+        try {
+            const created = await createActivityInBackoffice(createPayload);
+            persistedId = created?.activityId || created?.id || null;
+        } catch (err) {
+            console.warn("Backoffice save activity fallback to local storage:", err.message);
         }
 
         // Also store in localStorage & broadcast for instant same-browser sync

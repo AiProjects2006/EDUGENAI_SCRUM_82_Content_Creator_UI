@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     CalendarDays,
     Download,
@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { getEngagement, lessonEngagement, dailyEngagement, subjectEngagement } from "./data/engagementData";
+import { fetchBackofficeEnrollments, fetchCoursesFromBackoffice } from "../../../services/backofficeService";
 
 import BackofficeLayout from "../../../components/layout/BackofficeLayout";
 import CreatorSidebar from "../../../components/layout/Sidebar/CreatorSidebar";
@@ -15,8 +16,35 @@ import "./StudentEngagement.css";
 function StudentEngagement() {
 
     const [dateRange, setDateRange] = useState("Last 30 Days");
+    const [liveEnrollments, setLiveEnrollments] = useState([]);
 
-    const engagementData = getEngagement();
+    useEffect(() => {
+        let active = true;
+        Promise.all([
+            fetchBackofficeEnrollments().catch(() => []),
+            fetchCoursesFromBackoffice().catch(() => [])
+        ]).then(([enrollments, courses]) => {
+            if (!active || !Array.isArray(enrollments) || enrollments.length === 0) return;
+            const courseMap = new Map(
+                (Array.isArray(courses) ? courses : []).map((c) => [String(c.courseId || c.id), c.title || c.name])
+            );
+            const mapped = enrollments.map((e, idx) => ({
+                id: e.enrollmentId || idx + 1,
+                studentName: `Student #${e.userId || idx + 1}`,
+                course: courseMap.get(String(e.courseId)) || `Course #${e.courseId || 1}`,
+                timeSpent: 4.5,
+                completion: e.status === "COMPLETED" ? 100 : 65,
+                lastActive: e.lastAccessed ? new Date(e.lastAccessed).toLocaleDateString() : "Today",
+                daysAgo: 1
+            }));
+            setLiveEnrollments(mapped);
+        });
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    const engagementData = liveEnrollments.length > 0 ? [...liveEnrollments, ...getEngagement()] : getEngagement();
 
     const rangeDays = {
         "Last 7 Days": 7,

@@ -8,15 +8,19 @@ import MyCourses from "./components/MyCourses/MyCourses";
 import RecentActivities from "./components/RecentActivities/RecentActivities";
 import AttentionTable from "./components/AttentionTable/AttentionTable";
 import AIQuickActions from "./components/AIQuickActions/AIQuickActions";
-import { Plus, BookOpen, Clock, Users, Award } from "lucide-react";
+import { Plus, BookOpen, Clock, Users, Award, UserCheck, CheckCircle2, ArrowRight } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import CreateCourseModal from "./components/CreateCourseModal/CreateCourseModal";
 import CourseDetailsModal from "./components/CourseDetailsModal/CourseDetailsModal.jsx";
 import { useNavigate } from "react-router-dom";
+import { useCreatorAuth } from "../../../context/CreatorAuthContext";
 import {
     fetchCoursesFromBackoffice,
     createCourseInBackoffice,
     updateCourseInBackoffice,
+    fetchBackofficeOverview,
+    fetchCreatorEnrollmentRequests,
+    respondToEnrollmentRequest,
     deduplicateCourses
 } from "../../../services/backofficeService";
 
@@ -38,20 +42,49 @@ function ContentCreatorDashboard() {
 
     const [showCourseModal, setShowCourseModal] = useState(false);
     const [rawCourses, setRawCourses] = useState([]);
+    const [overviewEnrollments, setOverviewEnrollments] = useState(0);
+    const [pendingRequests, setPendingRequests] = useState([]);
     const [editingCourse, setEditingCourse] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const navigate = useNavigate();
+    const { user } = useCreatorAuth();
+
+    const creatorFullName =
+        user?.fullName ||
+        [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+        user?.username ||
+        "Creator";
+    const creatorFirstName = creatorFullName.split(/\s+/)[0] || "Creator";
 
     const loadCourses = useCallback(async () => {
         try {
-            const data = await fetchCoursesFromBackoffice();
+            const [data, overview, creatorReqs] = await Promise.all([
+                fetchCoursesFromBackoffice(),
+                fetchBackofficeOverview().catch(() => null),
+                fetchCreatorEnrollmentRequests({
+                    creatorId: user?.id,
+                    creatorEmail: user?.email,
+                    creatorName: creatorFullName,
+                    status: "PENDING"
+                }).catch(() => [])
+            ]);
             if (Array.isArray(data)) {
                 setRawCourses(data);
+            }
+            if (Array.isArray(creatorReqs)) {
+                setPendingRequests(
+                    creatorReqs.filter((r) => String(r.status || "").toUpperCase() === "PENDING")
+                );
+            }
+            if (overview && Number(overview.totalEnrollments) > 0) {
+                setOverviewEnrollments(Number(overview.totalEnrollments));
+            } else if (overview && Number(overview.totalStudents) > 0) {
+                setOverviewEnrollments(Number(overview.totalStudents));
             }
         } catch (e) {
             console.error("Failed loading courses for creator dashboard:", e);
         }
-    }, []);
+    }, [user?.id, user?.email, creatorFullName]);
 
     useEffect(() => {
         loadCourses();
@@ -73,9 +106,10 @@ function ContentCreatorDashboard() {
     const draftCourses = uniqueCourses.filter(
         c => (c.status || "").toLowerCase() === "draft" || (c.status || "").toLowerCase() === "pending"
     ).length;
-    const totalStudents = uniqueCourses.reduce(
+    const courseEnrollmentSum = uniqueCourses.reduce(
         (sum, c) => sum + (Number(c.enrollments) || 0), 0
     );
+    const totalStudents = Math.max(courseEnrollmentSum, overviewEnrollments);
 
     const stats = [
         {
@@ -106,7 +140,12 @@ function ContentCreatorDashboard() {
             name: updatedCourse.title,
             subject: updatedCourse.category,
             gradeLevel: updatedCourse.grade,
-            description: updatedCourse.description
+            description: updatedCourse.description,
+            author: creatorFullName,
+            creator: creatorFullName,
+            creatorId: user?.id || null,
+            creatorEmail: user?.email || null,
+            creatorAvatar: user?.avatarUrl || null
         });
         await loadCourses();
         setEditingCourse(null);
@@ -117,13 +156,26 @@ function ContentCreatorDashboard() {
         await createCourseInBackoffice({
             title: course.title,
             name: course.title,
-            subject: course.category || "Science",
+            subject: course.category || "Mathematics",
             gradeLevel: course.grade || "Grade 3-5",
             description: course.description || "",
+            author: creatorFullName,
+            creator: creatorFullName,
+            creatorId: user?.id || null,
+            creatorEmail: user?.email || null,
+            creatorAvatar: user?.avatarUrl || null,
             status: "Draft"
         });
         await loadCourses();
         setShowCourseModal(false);
+    };
+
+    const handleQuickAcceptEnrollment = async (reqItem) => {
+        await respondToEnrollmentRequest(reqItem.enrollmentId, {
+            status: "ACTIVE",
+            changedBy: creatorFullName
+        });
+        await loadCourses();
     };
 
     return (
@@ -155,7 +207,7 @@ function ContentCreatorDashboard() {
 
                 <div className="welcome-content">
                     <h2>
-                        Welcome Back, Alex! 👋
+                        Welcome Back, {creatorFirstName}! 👋
                     </h2>
 
                     <p>
@@ -163,6 +215,58 @@ function ContentCreatorDashboard() {
                         {totalCourses > 0 && ` You currently have ${totalCourses} courses in the curriculum.`}
                     </p>
                 </div>
+
+                {pendingRequests.length > 0 && (
+                    <div className="dashboard-enrollment-alert">
+                        <div className="dashboard-enrollment-alert-head">
+                            <div className="alert-title-wrap">
+                                <span className="alert-icon-badge">
+                                    <UserCheck size={20} />
+                                </span>
+                                <div>
+                                    <h3>
+                                        {pendingRequests.length} Pending Student Enrollment{" "}
+                                        {pendingRequests.length === 1 ? "Request" : "Requests"}
+                                    </h3>
+                                    <p>
+                                        Students have requested to join your courses and are waiting for your approval.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="view-all-requests-btn"
+                                onClick={() => navigate("/enrollment-requests")}
+                            >
+                                <span>Manage All Requests</span>
+                                <ArrowRight size={16} />
+                            </button>
+                        </div>
+
+                        <div className="dashboard-pending-list">
+                            {pendingRequests.slice(0, 3).map((req) => (
+                                <div key={req.enrollmentId} className="dashboard-pending-item">
+                                    <div className="pending-student-info">
+                                        <strong>{req.studentName || `Student #${req.userId}`}</strong>
+                                        <span>
+                                            wants to enroll in <b>{req.courseTitle || `Course #${req.courseId}`}</b>
+                                            {req.studentGrade ? ` (${req.studentGrade})` : ""}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="quick-accept-btn"
+                                        onClick={() => handleQuickAcceptEnrollment(req)}
+                                    >
+                                        <CheckCircle2 size={15} />
+                                        <span>Accept</span>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div className="creator-stats">
                     {stats.map((stat) => (
