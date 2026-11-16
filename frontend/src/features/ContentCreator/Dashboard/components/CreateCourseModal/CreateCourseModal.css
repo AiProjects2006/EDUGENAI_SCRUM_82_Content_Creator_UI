@@ -1,19 +1,23 @@
 .course-modal{
-    background:#fff;
+    background:#FFFFFF;
+    border:1px solid #E9D5FF;
+    color:#24143D;
     width:600px;
     max-width:90%;
     max-height:90vh;
     overflow-y:auto;
     border-radius:18px;
     padding:28px;
-    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    box-shadow:0 24px 60px rgba(27, 16, 48, 0.28);
 }
 
 .course-modal textarea{
     width:100%;
     padding:12px;
-    border:1px solid #ddd;
+    border:1px solid #DDD6FE;
     border-radius:10px;
+    background:#FFFFFF;
+    color:#24143D;
     resize:vertical;
     font-size:15px;
 }
@@ -22,12 +26,14 @@
 .course-modal input{
     width:100%;
     padding:12px;
-    border:1px solid #ddd;
+    border:1px solid #DDD6FE;
     border-radius:10px;
+    background:#FFFFFF;
+    color:#24143D;
 }
 
-.image-preview{
-    margin-top:15px;
+.image-preview {
+    margin-top: 15px;
 }
 
 .image-preview img{
@@ -35,5 +41,5 @@
     height:180px;
     object-fit:cover;
     border-radius:12px;
-    border:1px solid #ddd;
+    border:1px solid #EDE9FE;
 }

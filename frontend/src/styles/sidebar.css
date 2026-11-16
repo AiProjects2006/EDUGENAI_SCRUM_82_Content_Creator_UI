@@ -12,7 +12,7 @@
 
 .sidebar h2{
 
-    color:#7C3AED;
+    color:#5B21B6;
 
     margin-bottom:45px;
 
@@ -42,7 +42,7 @@
 
     border-radius:12px;
 
-    color:#6B7280;
+    color:#5B4B73;
 
     transition:.3s;
 
@@ -50,15 +50,15 @@
 
 .sidebar li:hover{
 
-    background:#F3EEFF;
+    background:#F3E8FF;
 
-    color:#7C3AED;
+    color:#5B21B6;
 
 }
 
 .active{
 
-    background:#7C3AED;
+    background:linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
 
     color:white !important;
 

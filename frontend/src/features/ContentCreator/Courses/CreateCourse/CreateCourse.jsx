@@ -386,7 +386,7 @@ function CreateCourse() {
                     ) : (
                         <div className="drive-uploaded-card">
                             <div className="drive-file-icon">
-                                <FileText size={24} color="#7200A8" />
+                                <FileText size={24} color="#6D28D9" />
                             </div>
                             <div className="drive-file-details">
                                 <div className="drive-file-name-row">

@@ -1,70 +1,74 @@
-.attention-table{
+.attention-table {
 
-    margin-top:32px;
+    margin-top: 32px;
 
-    background:#fff;
+    background:#FFFFFF;
 
-    border-radius:18px;
+    border:1px solid #ECE8FF;
 
-    padding:24px;
+    border-radius: 18px;
 
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    padding: 24px;
 
-}
-
-.attention-table table{
-
-    width:100%;
-
-    border-collapse:collapse;
+    box-shadow:0 6px 20px rgba(36, 20, 61, 0.05);
 
 }
 
-.attention-table th{
+.attention-table table {
 
-    text-align:left;
+    width: 100%;
 
-    padding:16px;
-
-    color:#666;
-
-    border-bottom:1px solid #eee;
+    border-collapse: collapse;
 
 }
 
-.attention-table td{
+.attention-table th {
 
-    padding:16px;
+    text-align: left;
 
-    border-bottom:1px solid #f3f3f3;
+    padding: 16px;
+
+    color:#6E5D88;
+
+    border-bottom:1px solid #EDE9FE;
 
 }
 
-.attention-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:22px;
+.attention-table td {
+
+    padding: 16px;
+
+    color:#24143D;
+
+    border-bottom:1px solid #F5F3FF;
+
+}
+
+.attention-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
 }
 
 .attention-header h2{
     margin-bottom:6px;
-    color:#24143d;
+    color:#1B1030;
 }
 
 .attention-header p{
-    color:#7b6c92;
+    color:#6E5D88;
     font-size:14px;
 }
 
 .attention-icon{
-    color:#F59E0B;
+    color:#D97706;
 }
 
-.course-cell{
-    display:flex;
-    align-items:center;
-    gap:12px;
+.course-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .course-avatar{
@@ -72,72 +76,74 @@
     height:42px;
     border-radius:12px;
     background:#F3E8FF;
-    color:#7C3AED;
+    color:#6D28D9;
     display:flex;
     justify-content:center;
     align-items:center;
 }
 
-.issue-badge{
-    background:#FEF3C7;
-    color:#B45309;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:600;
+.issue-badge {
+    background: #FEF3C7;
+    color: #B45309;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.priority{
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:600;
+.priority {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .priority.high{
     background:#FEE2E2;
-    color:#DC2626;
+    color:#B91C1C;
 }
 
 .priority.medium{
     background:#FEF3C7;
-    color:#D97706;
+    color:#B45309;
 }
 
 .priority.low{
     background:#DCFCE7;
-    color:#16A34A;
+    color:#15803D;
 }
 
-.table-actions{
-    display:flex;
-    gap:10px;
+.table-actions {
+    display: flex;
+    gap: 10px;
 }
 
 .attention-table tbody tr:hover{
-    background:#FAF7FF;
+    background:#FAF8FF;
 }
 
-.attention-btn{
+.attention-btn {
 
-    background:#7c3aed;
+    background:linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
 
-    color:white;
+    color:#FFFFFF;
 
-    border:none;
+    border: none;
 
-    padding:8px 16px;
+    padding: 8px 16px;
 
-    border-radius:8px;
+    border-radius: 8px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    font-weight:600;
+    font-weight: 600;
+
+    box-shadow:0 4px 10px rgba(109, 40, 217, 0.24);
 
 }
 
-.attention-btn:hover{
+.attention-btn:hover {
 
-    background:#6d28d9;
+    background:linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
 
 }

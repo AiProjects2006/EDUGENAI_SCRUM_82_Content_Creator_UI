@@ -68,7 +68,7 @@ function CourseDetails() {
                     setCourse(res);
                 }
             })
-            .catch(() => {});
+            .catch(() => { });
         return () => { active = false; };
     }, [id]);
 
@@ -107,7 +107,7 @@ function CourseDetails() {
                 const updated = exists
                     ? prev.map(m =>
                         Number(m.moduleId || m.id) === Number(savedModule.moduleId || savedModule.id) ||
-                        (m.title || m.name || '').trim().toLowerCase() === savedModule.title.trim().toLowerCase()
+                            (m.title || m.name || '').trim().toLowerCase() === savedModule.title.trim().toLowerCase()
                             ? savedModule
                             : m
                     )
@@ -424,19 +424,19 @@ function CourseDetails() {
 
                 {/* Google Drive Course Content */}
                 {course.contentPdfUrl && (
-                    <div className="course-description-card" style={{ border: '1px solid #D8B4FE', background: '#FAF5FF' }}>
-                        <div className="course-detail-card-title" style={{ color: '#6B21A8' }}>
+                    <div className="course-description-card" style={{ border: '1px solid #E9D5FF', background: '#FAF8FF' }}>
+                        <div className="course-detail-card-title" style={{ color: '#5B21B6' }}>
                             <FolderKanban size={18} />
                             Google Drive Course Content
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginTop: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <FileText size={20} color="#7200A8" />
+                                <FileText size={20} color="#6D28D9" />
                                 <div>
-                                    <strong style={{ display: 'block', fontSize: '14px', color: '#1F2937' }}>
+                                    <strong style={{ display: 'block', fontSize: '14px', color: '#1B1030' }}>
                                         {course.contentPdfName || 'Course Content Material'}
                                     </strong>
-                                    <span style={{ fontSize: '12px', color: '#6B7280' }}>
+                                    <span style={{ fontSize: '12px', color: '#6E5D88' }}>
                                         Educational Content / {course.subject} / {course.gradeLevel || course.grade}
                                     </span>
                                 </div>
@@ -446,7 +446,7 @@ function CourseDetails() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="drive-view-btn"
-                                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#7200A8', color: '#FFFFFF', borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}
+                                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: 'linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%)', color: '#FFFFFF', borderRadius: '6px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, boxShadow: '0 6px 14px rgba(109, 40, 217, 0.28)' }}
                             >
                                 <ExternalLink size={15} />
                                 View on Google Drive
@@ -467,13 +467,13 @@ function CourseDetails() {
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button
                                 className="add-module-btn"
-                                style={{ background: '#f5f3ff', color: '#6D28D9', border: '1px solid #d8b4fe' }}
+                                style={{ background: '#F5F3FF', color: '#5B21B6', border: '1px solid #DDD6FE' }}
                                 onClick={() => navigate('/module-management')}
                             >
                                 <Presentation size={15} />
                                 Open Module Dashboard
                             </button>
-                            <button 
+                            <button
                                 className="add-module-btn"
                                 onClick={() => setShowModuleForm(true)}
                                 disabled={loading}
@@ -516,14 +516,14 @@ function CourseDetails() {
                                 </div>
 
                                 <div className="modal-actions">
-                                    <button 
+                                    <button
                                         className="btn-cancel"
                                         onClick={handleCloseForm}
                                         disabled={loading}
                                     >
                                         Cancel
                                     </button>
-                                    <button 
+                                    <button
                                         className="btn-submit"
                                         onClick={editingModule ? handleUpdateModule : handleAddModule}
                                         disabled={loading}
@@ -581,7 +581,7 @@ function CourseDetails() {
                                     </div>
 
                                     <div className="modal-actions">
-                                        <button 
+                                        <button
                                             type="button"
                                             className="btn-cancel"
                                             onClick={() => setShowSlideForm(false)}
@@ -589,7 +589,7 @@ function CourseDetails() {
                                         >
                                             Cancel
                                         </button>
-                                        <button 
+                                        <button
                                             type="submit"
                                             className="btn-submit"
                                             disabled={loading}
@@ -607,7 +607,7 @@ function CourseDetails() {
                         <div className="empty-modules">
                             <BookOpen size={32} />
                             <p>No modules created yet</p>
-                            <button 
+                            <button
                                 className="add-module-btn"
                                 onClick={() => setShowModuleForm(true)}
                                 disabled={loading}
@@ -628,7 +628,7 @@ function CourseDetails() {
                                             <div className="module-info">
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                     <h4>{module.title}</h4>
-                                                    <span style={{ fontSize: '11px', background: '#ede9fe', color: '#5b21b6', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                                                    <span style={{ fontSize: '11px', background: '#F3E8FF', color: '#5B21B6', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
                                                         {modSlides.length} {modSlides.length === 1 ? 'Slide' : 'Slides'}
                                                     </span>
                                                 </div>
@@ -638,7 +638,7 @@ function CourseDetails() {
                                             <div className="module-item-actions">
                                                 <button
                                                     type="button"
-                                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f5f3ff', border: '1px solid #d8b4fe', color: '#6D28D9', borderRadius: '6px', padding: '6px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F5F3FF', border: '1px solid #DDD6FE', color: '#5B21B6', borderRadius: '6px', padding: '6px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
                                                     onClick={() => handleOpenAddSlide(module.moduleId)}
                                                     title="Add Slide to this module"
                                                 >
@@ -647,14 +647,14 @@ function CourseDetails() {
 
                                                 <button
                                                     type="button"
-                                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#faf5ff', border: '1px solid #eadcf3', color: '#5b21b6', borderRadius: '6px', padding: '6px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#FAF8FF', border: '1px solid #EDE9FE', color: '#5B21B6', borderRadius: '6px', padding: '6px 10px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
                                                     onClick={() => setExpandedModuleId(isExpanded ? null : module.moduleId)}
                                                     title="Toggle slides"
                                                 >
                                                     {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                                                 </button>
 
-                                                <button 
+                                                <button
                                                     className="edit-btn"
                                                     onClick={() => handleEditModule(module)}
                                                     title="Edit Module"
@@ -662,7 +662,7 @@ function CourseDetails() {
                                                 >
                                                     <Edit size={16} />
                                                 </button>
-                                                <button 
+                                                <button
                                                     className="delete-btn"
                                                     onClick={() => handleDeleteModule(module.moduleId)}
                                                     title="Delete Module"
@@ -675,14 +675,14 @@ function CourseDetails() {
 
                                         {/* Inline Slides Drawer */}
                                         {isExpanded && (
-                                            <div style={{ background: '#faf8fd', border: '1px solid #eadcf3', borderRadius: '10px', padding: '14px 18px', marginLeft: '20px' }}>
+                                            <div style={{ background: '#FAF8FF', border: '1px solid #EDE9FE', borderRadius: '10px', padding: '14px 18px', marginLeft: '20px' }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                                    <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#43135f' }}>
+                                                    <span style={{ fontSize: '12.5px', fontWeight: '700', color: '#1B1030' }}>
                                                         Module Slides ({modSlides.length})
                                                     </span>
                                                     <button
                                                         type="button"
-                                                        style={{ background: '#6D28D9', color: '#fff', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}
+                                                        style={{ background: 'linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%)', color: '#FFFFFF', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}
                                                         onClick={() => handleOpenAddSlide(module.moduleId)}
                                                     >
                                                         + Add Slide
@@ -690,22 +690,22 @@ function CourseDetails() {
                                                 </div>
 
                                                 {modSlides.length === 0 ? (
-                                                    <p style={{ margin: 0, fontSize: '12px', color: '#8b7892' }}>No slides in this module yet.</p>
+                                                    <p style={{ margin: 0, fontSize: '12px', color: '#7B6C92' }}>No slides in this module yet.</p>
                                                 ) : (
                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                                         {modSlides.map((slide, sIdx) => (
-                                                            <div key={slide.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', border: '1px solid #eadcf3', borderRadius: '8px', padding: '8px 12px' }}>
+                                                            <div key={slide.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', border: '1px solid #EDE9FE', borderRadius: '8px', padding: '8px 12px' }}>
                                                                 <div>
-                                                                    <div style={{ fontSize: '12.5px', fontWeight: '600', color: '#2d1a3d' }}>
+                                                                    <div style={{ fontSize: '12.5px', fontWeight: '600', color: '#24143D' }}>
                                                                         Slide {sIdx + 1}: {slide.title}
                                                                     </div>
-                                                                    <div style={{ fontSize: '11.5px', color: '#6b7280', marginTop: '2px' }}>
+                                                                    <div style={{ fontSize: '11.5px', color: '#6E5D88', marginTop: '2px' }}>
                                                                         {slide.content?.substring(0, 70)}...
                                                                     </div>
                                                                 </div>
                                                                 <button
                                                                     type="button"
-                                                                    style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer' }}
+                                                                    style={{ border: 'none', background: 'transparent', color: '#DC2626', cursor: 'pointer' }}
                                                                     onClick={() => handleDeleteSlide(slide.id)}
                                                                     title="Delete Slide"
                                                                 >

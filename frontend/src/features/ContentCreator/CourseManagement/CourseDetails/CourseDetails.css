@@ -12,14 +12,14 @@
     padding: 0;
     border: none;
     background: transparent;
-    color: #6d28d9;
+    color: #5B21B6;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
 
 .back-course-btn:hover {
-    color: #5b21b6;
+    color: #4C1D95;
 }
 
 .course-details-header {
@@ -33,7 +33,7 @@
 .course-details-label {
     display: inline-block;
     margin-bottom: 8px;
-    color: #6d28d9;
+    color: #6D28D9;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.8px;
@@ -41,7 +41,7 @@
 
 .course-details-heading h1 {
     margin: 0;
-    color: #111827;
+    color: #1B1030;
     font-size: 34px;
     font-weight: 700;
 }
@@ -49,7 +49,7 @@
 .course-details-heading p {
     max-width: 800px;
     margin: 10px 0 0;
-    color: #6b7280;
+    color: #6E5D88;
     font-size: 15px;
     line-height: 1.6;
 }
@@ -61,19 +61,20 @@
     padding: 12px 20px;
     border: none;
     border-radius: 10px;
-    background: #6d28d9;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
     transition: all 0.25s ease;
 }
 
 .edit-course-details-btn:hover {
-    background: #5b21b6;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
+    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.32);
 }
 
 .course-details-grid {
@@ -85,10 +86,11 @@
 
 .course-detail-card,
 .course-description-card {
-    background: #ffffff;
+    background: #FFFFFF;
+    border: 1px solid #ECE8FF;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 14px rgba(88, 28, 135, 0.06);
 }
 
 .course-detail-card-title {
@@ -96,13 +98,13 @@
     align-items: center;
     gap: 9px;
     margin-bottom: 22px;
-    color: #111827;
+    color: #1B1030;
     font-size: 17px;
     font-weight: 700;
 }
 
 .course-detail-card-title svg {
-    color: #6d28d9;
+    color: #6D28D9;
 }
 
 .course-detail-row {
@@ -111,7 +113,7 @@
     align-items: center;
     gap: 20px;
     padding: 14px 0;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #F5F3FF;
 }
 
 .course-detail-row:last-child {
@@ -119,12 +121,12 @@
 }
 
 .course-detail-row span {
-    color: #6b7280;
+    color: #6E5D88;
     font-size: 14px;
 }
 
 .course-detail-row strong {
-    color: #111827;
+    color: #1B1030;
     font-size: 14px;
     text-align: right;
 }
@@ -146,18 +148,18 @@
 }
 
 .course-status-large.published {
-    background: #dcfce7;
-    color: #15803d;
+    background: #DCFCE7;
+    color: #15803D;
 }
 
 .course-status-large.draft {
-    background: #fef3c7;
-    color: #b45309;
+    background: #FEF3C7;
+    color: #B45309;
 }
 
 .course-status-large.archived {
-    background: #e5e7eb;
-    color: #4b5563;
+    background: #F3E8FF;
+    color: #5B4B73;
 }
 
 .course-stat-list {
@@ -172,11 +174,12 @@
     gap: 12px;
     padding: 15px;
     border-radius: 10px;
-    background: #f8fafc;
+    background: #FAF8FF;
+    border: 1px solid #EDE9FE;
 }
 
 .course-stat-item svg {
-    color: #6d28d9;
+    color: #6D28D9;
 }
 
 .course-stat-item div {
@@ -186,12 +189,12 @@
 }
 
 .course-stat-item span {
-    color: #6b7280;
+    color: #6E5D88;
     font-size: 12px;
 }
 
 .course-stat-item strong {
-    color: #111827;
+    color: #1B1030;
     font-size: 16px;
 }
 
@@ -201,7 +204,7 @@
 
 .course-description-card p {
     margin: 0;
-    color: #6b7280;
+    color: #5B4B73;
     font-size: 14px;
     line-height: 1.7;
 }
@@ -213,22 +216,23 @@
 
 .course-not-found h1 {
     margin-bottom: 10px;
-    color: #111827;
+    color: #1B1030;
 }
 
 .course-not-found p {
     margin-bottom: 25px;
-    color: #6b7280;
+    color: #6E5D88;
 }
 
 .course-not-found button {
     padding: 12px 20px;
     border: none;
     border-radius: 9px;
-    background: #6d28d9;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
     font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
 }
 
 @media (max-width: 900px) {
@@ -257,12 +261,13 @@
 
 /* Modules Section */
 .course-modules-section {
-    background: #ffffff;
+    background: #FFFFFF;
+    border: 1px solid #ECE8FF;
     border-radius: 16px;
     padding: 24px;
     margin-top: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 14px rgba(88, 28, 135, 0.06);
 }
 
 .modules-section-header {
@@ -271,7 +276,7 @@
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f1f5f9;
+    border-bottom: 1px solid #EDE9FE;
 }
 
 .section-title {
@@ -280,11 +285,11 @@
     gap: 0.75rem;
     font-size: 1.1rem;
     font-weight: 700;
-    color: #111827;
+    color: #1B1030;
 }
 
 .section-title svg {
-    color: #6d28d9;
+    color: #6D28D9;
 }
 
 .add-module-btn {
@@ -292,20 +297,21 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
-    background: #6d28d9;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     font-size: 0.9rem;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
     transition: all 0.3s ease;
 }
 
 .add-module-btn:hover:not(:disabled) {
-    background: #5b21b6;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
+    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.32);
 }
 
 .add-module-btn:disabled {
@@ -320,7 +326,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(27, 16, 48, 0.58);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -329,9 +336,10 @@
 }
 
 .module-form-modal {
-    background: white;
+    background: #FFFFFF;
+    border: 1px solid #E9D5FF;
     border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 24px 60px rgba(27, 16, 48, 0.28);
     max-width: 500px;
     width: 100%;
     animation: slideIn 0.3s ease;
@@ -342,6 +350,7 @@
         transform: translateY(-50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -353,13 +362,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    background: #FAF8FF;
+    border-bottom: 1px solid #EDE9FE;
+    border-radius: 12px 12px 0 0;
 }
 
 .module-form-modal .modal-header h3 {
     margin: 0;
     font-size: 1.25rem;
-    color: #111827;
+    color: #1B1030;
     font-weight: 700;
 }
 
@@ -368,12 +379,12 @@
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #9ca3af;
+    color: #7B6C92;
     transition: color 0.2s;
 }
 
 .module-form-modal .close-btn:hover {
-    color: #6b7280;
+    color: #24143D;
 }
 
 .module-form-modal .form-group {
@@ -383,7 +394,7 @@
 .module-form-modal .form-group label {
     display: block;
     font-weight: 600;
-    color: #111827;
+    color: #24143D;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
@@ -392,7 +403,9 @@
 .module-form-modal .form-group textarea {
     width: 100%;
     padding: 0.7rem 1rem;
-    border: 2px solid #e5e7eb;
+    border: 2px solid #DDD6FE;
+    background: #FFFFFF;
+    color: #24143D;
     border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
@@ -403,8 +416,8 @@
 .module-form-modal .form-group input:focus,
 .module-form-modal .form-group textarea:focus {
     outline: none;
-    border-color: #6d28d9;
-    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.14);
 }
 
 .module-form-modal .modal-actions {
@@ -412,7 +425,9 @@
     gap: 1rem;
     justify-content: flex-end;
     padding: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    background: #FAF8FF;
+    border-top: 1px solid #EDE9FE;
+    border-radius: 0 0 12px 12px;
 }
 
 .module-form-modal .btn-cancel,
@@ -427,41 +442,44 @@
 }
 
 .module-form-modal .btn-cancel {
-    background-color: #f3f4f6;
-    color: #111827;
+    background-color: #FFFFFF;
+    color: #5B21B6;
+    border: 1px solid #DDD6FE;
 }
 
 .module-form-modal .btn-cancel:hover {
-    background-color: #e5e7eb;
+    background-color: #F3E8FF;
+    border-color: #C4B5FD;
 }
 
 .module-form-modal .btn-submit {
-    background: #6d28d9;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
 }
 
 .module-form-modal .btn-submit:hover {
-    background: #5b21b6;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
+    box-shadow: 0 8px 20px rgba(109, 40, 217, 0.32);
 }
 
 /* Empty Modules State */
 .empty-modules {
     text-align: center;
     padding: 2rem;
-    color: #9ca3af;
+    color: #7B6C92;
 }
 
 .empty-modules svg {
-    color: #e5e7eb;
+    color: #DDD6FE;
     margin-bottom: 1rem;
 }
 
 .empty-modules p {
     font-size: 1rem;
     margin-bottom: 1.5rem;
-    color: #6b7280;
+    color: #6E5D88;
 }
 
 /* Modules List */
@@ -476,28 +494,29 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
+    background: #FAF8FF;
+    border: 1px solid #EDE9FE;
     border-radius: 10px;
     transition: all 0.3s ease;
 }
 
 .module-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border-color: #C4B5FD;
+    box-shadow: 0 8px 20px rgba(88, 28, 135, 0.11);
 }
 
 .module-info h4 {
     margin: 0 0 0.5rem 0;
     font-size: 1rem;
-    color: #111827;
+    color: #1B1030;
     font-weight: 600;
 }
 
 .module-info p {
     margin: 0;
     font-size: 0.9rem;
-    color: #6b7280;
+    color: #6E5D88;
 }
 
 .module-item-actions {
@@ -519,19 +538,19 @@
 }
 
 .module-item-actions .edit-btn {
-    color: #6d28d9;
+    color: #6D28D9;
 }
 
 .module-item-actions .edit-btn:hover {
-    background-color: rgba(109, 40, 217, 0.1);
+    background-color: #F3E8FF;
 }
 
 .module-item-actions .delete-btn {
-    color: #dc2626;
+    color: #DC2626;
 }
 
 .module-item-actions .delete-btn:hover {
-    background-color: rgba(220, 38, 38, 0.1);
+    background-color: #FEE2E2;
 }
 
 .module-item-actions button:disabled {
