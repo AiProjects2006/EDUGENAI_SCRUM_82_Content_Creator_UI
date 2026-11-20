@@ -387,9 +387,9 @@ function StudentEngagement() {
                                     className="donut-ring"
                                     style={{
                                         background: `conic-gradient(
-                                            #6d28d9 0% ${science}%,
-                                            #c026d3 ${science}% ${mathEnd}%,
-                                            #7e22ce ${mathEnd}% ${ictEnd}%
+                                            #6D28D9 0% ${science}%,
+                                            #9333EA ${science}% ${mathEnd}%,
+                                            #24143D ${mathEnd}% ${ictEnd}%
                                         )`
                                     }}
                                 />

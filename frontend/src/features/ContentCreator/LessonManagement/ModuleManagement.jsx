@@ -568,7 +568,7 @@ function ModuleManagement() {
 
                       {moduleSlides.length === 0 ? (
                         <div className="empty-slides-box">
-                          <Presentation size={36} color="#d8b4fe" />
+                          <Presentation size={36} color="#C4B5FD" />
                           <p>
                             No slides added to this module yet. Students will see an empty
                             module state until slides or learning materials are added.
@@ -836,7 +836,7 @@ function ModuleManagement() {
                       <div className="attached-file-info">
                         <FileText size={16} />
                         <span>{slideForm.file.name}</span>
-                        <span style={{ color: '#8b7892', fontSize: '11px' }}>
+                        <span style={{ color: '#7B6C92', fontSize: '11px' }}>
                           ({slideForm.file.size})
                         </span>
                       </div>

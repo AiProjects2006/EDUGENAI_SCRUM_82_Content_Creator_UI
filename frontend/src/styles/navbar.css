@@ -1,25 +1,26 @@
 .navbar{
-    background:white;
+    background:#FFFFFF;
     border-radius:15px;
+    border:1px solid #ECE8FF;
     padding:20px 30px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:25px;
-    box-shadow:0 8px 20px rgba(124,58,237,.08);
+    box-shadow:0 4px 14px rgba(88, 28, 135, 0.06);
 }
 
 .navbar h2{
-    color:#1F2937;
+    color:#1B1030;
 }
 
 .navbar p{
-    color:#6B7280;
+    color:#6E5D88;
 }
 
 .navbar-right{
     display:flex;
     gap:20px;
     align-items:center;
-    color:#7C3AED;
+    color:#5B21B6;
 }

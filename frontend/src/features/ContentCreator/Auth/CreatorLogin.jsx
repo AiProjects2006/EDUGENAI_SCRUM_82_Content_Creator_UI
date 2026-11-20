@@ -102,7 +102,7 @@ export default function CreatorLogin() {
             style={{ marginBottom: '20px' }}
           >
             {errorMessage.toLowerCase().includes('pending') ? (
-              <Clock size={20} style={{ flexShrink: 0, marginTop: '2px', color: '#D97706' }} />
+              <Clock size={20} style={{ flexShrink: 0, marginTop: '2px', color: '#B45309' }} />
             ) : (
               <AlertCircle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
             )}

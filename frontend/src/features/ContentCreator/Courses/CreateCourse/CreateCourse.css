@@ -12,21 +12,21 @@
     margin: 0;
     font-size: 28px;
     font-weight: 700;
-    color: #111827;
+    color: #1B1030;
 }
 
 .create-course-header p {
     margin-top: 6px;
-    color: #6B7280;
+    color: #6E5D88;
     font-size: 14px;
 }
 
 .create-course-form {
     background: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 12px;
+    border: 1px solid #ECE8FF;
+    border-radius: 16px;
     padding: 28px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 6px 20px rgba(36, 20, 61, 0.05);
 }
 
 .form-row {
@@ -45,7 +45,7 @@
     margin-bottom: 7px;
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
+    color: #5B4B73;
 }
 
 .form-group input,
@@ -53,12 +53,12 @@
 .form-group textarea {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #DDD6FE;
     border-radius: 8px;
-    background: #F9FAFB;
+    background: #FFFFFF;
     padding: 11px 14px;
     font-size: 14px;
-    color: #1F2937;
+    color: #24143D;
     outline: none;
     transition: 0.2s ease;
 }
@@ -77,18 +77,18 @@
 .form-group select:focus,
 .form-group textarea:focus {
     background: #FFFFFF;
-    border-color: #7200A8;
-    box-shadow: 0 0 0 3px rgba(114, 0, 168, 0.12);
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.14);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: #9CA3AF;
+    color: #7B6C92;
 }
 
 /* Google Drive Upload Section */
 .google-drive-section {
-    background: #FAF7FD;
+    background: #FAF8FF;
     border: 1px solid #E9D5FF;
     border-radius: 12px;
     padding: 20px;
@@ -110,7 +110,7 @@
     align-items: center;
     gap: 8px;
     background: #F3E8FF;
-    color: #6B21A8;
+    color: #5B21B6;
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 13px;
@@ -119,11 +119,11 @@
 
 .drive-folder-target {
     font-size: 12px;
-    color: #6B7280;
+    color: #6E5D88;
 }
 
 .drive-folder-target strong {
-    color: #4B5563;
+    color: #24143D;
 }
 
 .drive-upload-dropzone {
@@ -138,8 +138,8 @@
 }
 
 .drive-upload-dropzone:hover {
-    border-color: #7200A8;
-    background: #FCF9FF;
+    border-color: #6D28D9;
+    background: #FAF5FF;
 }
 
 .drive-upload-dropzone input {
@@ -158,7 +158,7 @@
     height: 52px;
     border-radius: 50%;
     background: #F3E8FF;
-    color: #7200A8;
+    color: #6D28D9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,19 +169,19 @@
     margin: 0 0 4px 0;
     font-size: 14px;
     font-weight: 600;
-    color: #1F2937;
+    color: #1B1030;
 }
 
 .drive-upload-text p {
     margin: 0 0 6px 0;
     font-size: 13px;
-    color: #6B7280;
+    color: #6E5D88;
 }
 
 .drive-supported-formats {
     font-size: 11px;
     font-weight: 500;
-    color: #9CA3AF;
+    color: #7B6C92;
 }
 
 .drive-uploading-card {
@@ -190,30 +190,35 @@
     gap: 14px;
     padding: 16px;
     background: #FFFFFF;
-    border: 1px solid #D8B4FE;
+    border: 1px solid #C4B5FD;
     border-radius: 10px;
 }
 
 .drive-uploading-card .spinner {
-    color: #7200A8;
+    color: #6D28D9;
     animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .drive-uploading-info p {
     margin: 0 0 4px 0;
     font-size: 13px;
     font-weight: 600;
-    color: #1F2937;
+    color: #1B1030;
 }
 
 .drive-uploading-info span {
     font-size: 12px;
-    color: #6B7280;
+    color: #6E5D88;
 }
 
 .drive-uploaded-card {
@@ -222,8 +227,8 @@
     gap: 14px;
     padding: 14px 18px;
     background: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    border-left: 4px solid #7200A8;
+    border: 1px solid #DDD6FE;
+    border-left: 4px solid #6D28D9;
     border-radius: 10px;
 }
 
@@ -232,6 +237,7 @@
     height: 44px;
     border-radius: 8px;
     background: #F3E8FF;
+    color: #6D28D9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -254,7 +260,7 @@
 .drive-file-name {
     font-size: 14px;
     font-weight: 600;
-    color: #111827;
+    color: #1B1030;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -275,7 +281,7 @@
 
 .drive-path-text {
     font-size: 12px;
-    color: #6B7280;
+    color: #6E5D88;
 }
 
 .drive-file-actions {
@@ -290,7 +296,7 @@
     gap: 6px;
     padding: 7px 12px;
     background: #F3E8FF;
-    color: #7200A8;
+    color: #5B21B6;
     text-decoration: none;
     font-size: 12px;
     font-weight: 600;
@@ -299,14 +305,14 @@
 }
 
 .drive-view-btn:hover {
-    background: #E9D5FF;
+    background: #EDE9FE;
 }
 
 .drive-remove-btn {
     width: 32px;
     height: 32px;
     border-radius: 6px;
-    border: 1px solid #FCA5A5;
+    border: 1px solid #FECACA;
     background: #FEF2F2;
     color: #DC2626;
     display: flex;
@@ -347,32 +353,33 @@
 
 .cancel-btn {
     background: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    color: #6B7280;
+    border: 1px solid #DDD6FE;
+    color: #5B4B73;
 }
 
 .cancel-btn:hover {
-    background: #F3F4F6;
+    background: #F5F3FF;
 }
 
 .draft-btn {
-    background: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    color: #374151;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
+    color: #5B21B6;
 }
 
 .draft-btn:hover {
-    background: #F3F4F6;
+    background: #EDE9FE;
 }
 
 .publish-btn {
-    background: #7200A8;
-    border: 1px solid #7200A8;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    border: none;
     color: #FFFFFF;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
 }
 
 .publish-btn:hover {
-    background: #5E008C;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
 }
 
 .archive-btn {
@@ -393,16 +400,18 @@
 
 .archive-btn:hover {
     background: #FEE2E2;
-    border-color: #FCA5A5;
+    border-color: #FECACA;
 }
 
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
     }
+
     .create-course-form {
         padding: 20px;
     }
+
     .form-actions {
         flex-wrap: wrap;
     }

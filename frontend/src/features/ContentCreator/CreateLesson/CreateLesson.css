@@ -10,12 +10,12 @@
 .create-lesson-card {
     width: 100%;
     max-width: 680px;
-    background: #ffffff;
-    border: 1px solid #d9c9e8;
+    background: #FFFFFF;
+    border: 1px solid #ECE8FF;
     border-radius: 6px;
     padding: 24px 28px;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(50, 20, 70, 0.06);
+    box-shadow: 0 4px 14px rgba(88, 28, 135, 0.06);
 }
 
 .lesson-heading {
@@ -24,19 +24,19 @@
 
 .lesson-heading h1 {
     margin: 0;
-    color: #2d1a3d;
+    color: #1B1030;
     font-size: 21px;
     font-weight: 700;
 }
 
 .lesson-heading p {
     margin: 5px 0 0;
-    color: #777080;
+    color: #6E5D88;
     font-size: 12px;
 }
 
 .lesson-section {
-    border: 1px solid #eadcf3;
+    border: 1px solid #EDE9FE;
     border-radius: 6px;
     padding: 14px;
     margin-bottom: 12px;
@@ -46,16 +46,16 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    color: #43135f;
+    color: #1B1030;
     font-size: 11px;
     font-weight: 600;
     padding-bottom: 9px;
-    border-bottom: 1px solid #d7aeea;
+    border-bottom: 1px solid #EDE9FE;
     margin-bottom: 13px;
 }
 
 .section-title svg {
-    color: #7610a4;
+    color: #6D28D9;
 }
 
 .form-group {
@@ -69,7 +69,7 @@
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    color: #62556c;
+    color: #24143D;
     font-size: 10px;
     font-weight: 500;
 }
@@ -78,11 +78,11 @@
 .form-group textarea {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #eadcf3;
+    border: 1px solid #DDD6FE;
     outline: none;
     border-radius: 5px;
-    background: #ffffff;
-    color: #51445a;
+    background: #FFFFFF;
+    color: #24143D;
     font-size: 10px;
     padding: 9px 10px;
     font-family: inherit;
@@ -99,17 +99,19 @@
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #9b43bd;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.14);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: #a38da9;
+    color: #7B6C92;
 }
 
 .upload-area {
     min-height: 120px;
-    border: 1px dashed #d8b8e8;
+    border: 1px dashed #C4B5FD;
+    background: #FAF8FF;
     border-radius: 7px;
     display: flex;
     flex-direction: column;
@@ -121,30 +123,30 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: #eee7ff;
+    background: #F3E8FF;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #7210a0;
+    color: #5B21B6;
     margin-bottom: 7px;
 }
 
 .upload-main-text {
     margin: 0;
-    color: #5a4b65;
+    color: #24143D;
     font-size: 10px;
 }
 
 .upload-sub-text {
     margin: 5px 0 9px;
-    color: #95899b;
+    color: #7B6C92;
     font-size: 8px;
 }
 
 .browse-btn {
     border-radius: 4px;
-    background: #71008f;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
     padding: 6px 14px;
     font-size: 9px;
     font-weight: 600;
@@ -152,13 +154,13 @@
 }
 
 .browse-btn:hover {
-    background: #5d0077;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
 }
 
 .uploaded-file {
     margin-top: 9px;
-    background: #ecd7fa;
-    border: 1px solid #c997df;
+    background: #F5F3FF;
+    border: 1px solid #DDD6FE;
     border-radius: 5px;
     min-height: 42px;
     padding: 7px 9px;
@@ -178,11 +180,11 @@
     width: 27px;
     height: 27px;
     border-radius: 4px;
-    background: #f7effc;
+    background: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #74129b;
+    color: #5B21B6;
 }
 
 .file-info {
@@ -192,12 +194,12 @@
 }
 
 .file-info strong {
-    color: #493653;
+    color: #1B1030;
     font-size: 9px;
 }
 
 .file-info span {
-    color: #8b7892;
+    color: #6E5D88;
     font-size: 8px;
 }
 
@@ -211,14 +213,14 @@
     display: flex;
     align-items: center;
     gap: 3px;
-    color: #6e078d;
+    color: #5B21B6;
     font-size: 8px;
 }
 
 .delete-file {
     border: none;
     background: transparent;
-    color: #55455d;
+    color: #7B6C92;
     cursor: pointer;
 }
 
@@ -241,8 +243,8 @@
     height: 34px;
     border: none;
     border-radius: 5px;
-    background: #71008f;
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -253,7 +255,7 @@
 }
 
 .save-lesson-btn:hover {
-    background: #5d0077;
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
 }
 
 .secondary-actions {
@@ -282,42 +284,35 @@
 .save-lesson-btn {
     min-width: 125px;
     border: none;
-    background: linear-gradient(
-            135deg,
-            #8b3ee0,
-            #c026d3
-    );
-    color: white;
+    background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%);
+    color: #FFFFFF;
+    box-shadow: 0 6px 14px rgba(109, 40, 217, 0.28);
 }
 
 .save-lesson-btn:hover {
-    background: linear-gradient(
-            135deg,
-            #762dcc,
-            #a91bb9
-    );
+    background: linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%);
 }
 
 .save-draft-btn {
     min-width: 110px;
-    border: 1px solid #d8b4e8;
-    background: #fff;
-    color: #74129b;
+    border: 1px solid #DDD6FE;
+    background: #F5F3FF;
+    color: #5B21B6;
 }
 
 .save-draft-btn:hover {
-    background: #faf4ff;
+    background: #EDE9FE;
 }
 
 .cancel-lesson-btn {
     min-width: 80px;
-    border: 1px solid #ddd;
-    background: white;
-    color: #666;
+    border: 1px solid #DDD6FE;
+    background: #FFFFFF;
+    color: #5B21B6;
 }
 
 .cancel-lesson-btn:hover {
-    background: #f5f5f5;
+    background: #F3E8FF;
 }
 
 @media (max-width: 768px) {

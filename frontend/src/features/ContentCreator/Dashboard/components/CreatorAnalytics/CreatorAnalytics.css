@@ -1,26 +1,26 @@
-.creator-analytics{
-    background: #fff;
+.creator-analytics {
+    background: #FFFFFF;
+    border: 1px solid #ECE8FF;
     border-radius: 18px;
     padding: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    box-shadow: 0 4px 14px rgba(88, 28, 135, 0.06);
     display: flex;
     flex-direction: column;
     height: 390px;
 }
 
-.creator-analytics h3{
+.creator-analytics h3 {
     margin-bottom: 20px;
-    color: #2f2346;
+    color: #1B1030;
     font-size: 20px;
     font-weight: 600;
 }
 
-.recharts-responsive-container{
+.recharts-responsive-container {
     flex: 1;
 }
 
-.chart-container{
-    flex:1;
-    width:100%;
+.chart-container {
+    flex: 1;
+    width: 100%;
 }
-

@@ -140,13 +140,13 @@ function ActivityConfiguration({
                     gap: "8px",
                     border: "none",
                     borderRadius: "7px",
-                    background: isGenerating ? "#9b6aa8" : "#72008c",
-                    color: "#ffffff",
+                    background: isGenerating ? "#9D8BB8" : "linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%)",
+                    color: "#FFFFFF",
                     fontFamily: "inherit",
                     fontSize: "12px",
                     fontWeight: 700,
                     cursor: isGenerating ? "wait" : "pointer",
-                    boxShadow: "0 4px 12px rgba(114, 0, 140, 0.25)"
+                    boxShadow: "0 6px 14px rgba(109, 40, 217, 0.28)"
                 }}
             >
                 <Sparkles size={15} />

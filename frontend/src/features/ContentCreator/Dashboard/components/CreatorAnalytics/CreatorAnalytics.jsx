@@ -25,19 +25,19 @@ function CreatorAnalytics() {
 
                     <AreaChart data={performanceData}>
 
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#EDE9FE" />
 
-                        <XAxis dataKey="month" />
+                        <XAxis dataKey="month" stroke="#7B6C92" />
 
-                        <YAxis />
+                        <YAxis stroke="#7B6C92" />
 
                         <Tooltip />
 
                         <Area
                             type="monotone"
                             dataKey="views"
-                            stroke="#7c3aed"
-                            fill="#c4b5fd"
+                            stroke="#6D28D9"
+                            fill="#DDD6FE"
                         />
 
                     </AreaChart>

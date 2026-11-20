@@ -58,9 +58,10 @@ function ActivityPreview({
                         style={
                             questions.length
                                 ? {
-                                      background: "#72008c",
-                                      color: "#ffffff",
-                                      borderColor: "#72008c"
+                                      background: "linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%)",
+                                      color: "#FFFFFF",
+                                      borderColor: "#6D28D9",
+                                      boxShadow: "0 6px 14px rgba(109, 40, 217, 0.28)"
                                   }
                                 : undefined
                         }
@@ -77,9 +78,9 @@ function ActivityPreview({
                         marginBottom: "18px",
                         padding: "12px 16px",
                         borderRadius: "8px",
-                        background: "#ecfdf5",
-                        border: "1px solid #6ee7b7",
-                        color: "#065f46",
+                        background: "#DCFCE7",
+                        border: "1px solid #86EFAC",
+                        color: "#15803D",
                         fontSize: "12px",
                         fontWeight: 600
                     }}
@@ -128,7 +129,7 @@ function ActivityPreview({
                         <button
                             type="button"
                             onClick={onAddQuestion}
-                            style={{ background: "#ffffff", color: "#72008c" }}
+                            style={{ background: "#FFFFFF", color: "#5B21B6", border: "1px solid #DDD6FE", boxShadow: "none" }}
                         >
                             <Plus size={14} />
                             Add Manually
@@ -164,11 +165,11 @@ function ActivityPreview({
                                 <div className="activity-question-body">
                                     {question.scenario && (
                                         <div style={{ marginBottom: "14px" }}>
-                                            <label style={{ display: "block", marginBottom: "6px", color: "#75677a", fontSize: "10px", fontWeight: 700 }}>
+                                            <label style={{ display: "block", marginBottom: "6px", color: "#5B4B73", fontSize: "10px", fontWeight: 700 }}>
                                                 SCENARIO
                                             </label>
                                             <textarea
-                                                style={{ width: "100%", minHeight: "68px", padding: "10px", border: "1px solid #e5d9e8", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px" }}
+                                                style={{ width: "100%", minHeight: "68px", padding: "10px", border: "1px solid #DDD6FE", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px", color: "#24143D" }}
                                                 value={question.scenario}
                                                 onChange={(e) => onUpdateQuestion(question.id, "scenario", e.target.value)}
                                             />
@@ -177,11 +178,11 @@ function ActivityPreview({
 
                                     {question.passage && (
                                         <div style={{ marginBottom: "14px" }}>
-                                            <label style={{ display: "block", marginBottom: "6px", color: "#75677a", fontSize: "10px", fontWeight: 700 }}>
+                                            <label style={{ display: "block", marginBottom: "6px", color: "#5B4B73", fontSize: "10px", fontWeight: 700 }}>
                                                 READING PASSAGE
                                             </label>
                                             <textarea
-                                                style={{ width: "100%", minHeight: "76px", padding: "10px", border: "1px solid #e5d9e8", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px" }}
+                                                style={{ width: "100%", minHeight: "76px", padding: "10px", border: "1px solid #DDD6FE", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px", color: "#24143D" }}
                                                 value={question.passage}
                                                 onChange={(e) => onUpdateQuestion(question.id, "passage", e.target.value)}
                                             />
@@ -241,12 +242,12 @@ function ActivityPreview({
                                     {/* Open-Ended / Fill Blank / Short Answer / Problem Solving / Essay Expected Answer */}
                                     {!hasOptions && !hasMatching && !hasSorting && !hasOrder && !hasRegions && (
                                         <div style={{ marginTop: "16px" }}>
-                                            <label style={{ display: "block", marginBottom: "6px", color: "#75677a", fontSize: "10px", fontWeight: 700 }}>
+                                            <label style={{ display: "block", marginBottom: "6px", color: "#5B4B73", fontSize: "10px", fontWeight: 700 }}>
                                                 EXPECTED / CORRECT ANSWER
                                             </label>
                                             <input
                                                 type="text"
-                                                style={{ width: "100%", height: "40px", padding: "0 12px", border: "1px solid #e5d9e8", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px", boxSizing: "border-box" }}
+                                                style={{ width: "100%", height: "40px", padding: "0 12px", border: "1px solid #DDD6FE", borderRadius: "6px", fontFamily: "inherit", fontSize: "12px", color: "#24143D", boxSizing: "border-box" }}
                                                 value={question.correctAnswer || question.expectedAnswer || ""}
                                                 onChange={(e) => {
                                                     onUpdateQuestion(question.id, "correctAnswer", e.target.value);
@@ -259,8 +260,8 @@ function ActivityPreview({
 
                                     {/* Matching Pairs Summary */}
                                     {hasMatching && (
-                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#faf5fc", border: "1px solid #ead7ef" }}>
-                                            <strong style={{ fontSize: "11px", color: "#72008c" }}>MATCHING PAIRS</strong>
+                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#FAF8FF", border: "1px solid #EDE9FE" }}>
+                                            <strong style={{ fontSize: "11px", color: "#5B21B6" }}>MATCHING PAIRS</strong>
                                             <ul style={{ margin: "8px 0 0", paddingLeft: "18px", fontSize: "12px" }}>
                                                 {question.leftItems.map((l) => {
                                                     const rId = question.matchingAnswers?.[l.id];
@@ -277,8 +278,8 @@ function ActivityPreview({
 
                                     {/* Category Sorting Summary */}
                                     {hasSorting && (
-                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#faf5fc", border: "1px solid #ead7ef" }}>
-                                            <strong style={{ fontSize: "11px", color: "#72008c" }}>
+                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#FAF8FF", border: "1px solid #EDE9FE" }}>
+                                            <strong style={{ fontSize: "11px", color: "#5B21B6" }}>
                                                 CATEGORIES: {(question.categories || []).join(" | ")}
                                             </strong>
                                             <ul style={{ margin: "8px 0 0", paddingLeft: "18px", fontSize: "12px" }}>
@@ -293,8 +294,8 @@ function ActivityPreview({
 
                                     {/* Drag & Drop Sequence Summary */}
                                     {hasOrder && (
-                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#faf5fc", border: "1px solid #ead7ef" }}>
-                                            <strong style={{ fontSize: "11px", color: "#72008c" }}>CORRECT SEQUENCE</strong>
+                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#FAF8FF", border: "1px solid #EDE9FE" }}>
+                                            <strong style={{ fontSize: "11px", color: "#5B21B6" }}>CORRECT SEQUENCE</strong>
                                             <ol style={{ margin: "8px 0 0", paddingLeft: "18px", fontSize: "12px" }}>
                                                 {question.itemsToOrder.map((step, idx) => (
                                                     <li key={idx}>{step}</li>
@@ -305,15 +306,15 @@ function ActivityPreview({
 
                                     {/* Hotspot Diagram Summary */}
                                     {hasRegions && (
-                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#faf5fc", border: "1px solid #ead7ef" }}>
-                                            <strong style={{ fontSize: "11px", color: "#72008c" }}>
+                                        <div style={{ marginTop: "16px", padding: "12px", borderRadius: "6px", background: "#FAF8FF", border: "1px solid #EDE9FE" }}>
+                                            <strong style={{ fontSize: "11px", color: "#5B21B6" }}>
                                                 HOTSPOT REGIONS ({question.imageDescription || "Diagram"})
                                             </strong>
                                             <ul style={{ margin: "8px 0 0", paddingLeft: "18px", fontSize: "12px" }}>
                                                 {question.regions.map((r, idx) => (
                                                     <li key={idx}>
                                                         {r.label} ({r.x}%, {r.y}%){" "}
-                                                        {r.isCorrect ? <strong style={{ color: "#15803d" }}>✓ Target</strong> : ""}
+                                                        {r.isCorrect ? <strong style={{ color: "#15803D" }}>✓ Target</strong> : ""}
                                                     </li>
                                                 ))}
                                             </ul>
